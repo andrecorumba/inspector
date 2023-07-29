@@ -1,5 +1,3 @@
-Aqui está o conteúdo para o arquivo README.md do projeto "Auditor-Copilot":
-
 # Inspector
 
 O **Inspector** é uma aplicação web, escrita em Python, que analisa vários tipos de documentos de forma mais eficiente. Ela se  utiliza o poder do modelo de linguagem GPT-3.5-turbo da OpenAI para fornecer respostas formais e precisas com base em perguntas feitas pelo usuário.
@@ -37,13 +35,13 @@ pip install langchain
 1. Clone o repositório:
 
 ```
-git clone https://github.com/seu-usuario/Auditor-Copilot.git
+git clone https://github.com/andrecorumba/inspector.git
 ```
 
 2. Acesse o diretório do projeto:
 
 ```
-cd Auditor-Copilot
+cd inspector
 ```
 
 3. Crie um arquivo `.env` na raiz do projeto com sua chave da API da OpenAI:
@@ -82,8 +80,7 @@ streamlit run app.py
 
 ## Autores
 
-- Seu Nome
-- Seu Colega
+- andrecorumba
 
 ## Contribuições
 
