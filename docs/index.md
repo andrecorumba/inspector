@@ -1,4 +1,4 @@
-# Inspector
+# README
 
 O **Inspector** é uma aplicação web, escrita em Python, que analisa vários tipos de documentos de forma mais eficiente. Ela se  utiliza o poder do modelo de linguagem GPT-3.5-turbo da OpenAI para fornecer respostas formais e precisas com base em perguntas feitas pelo usuário.
 
@@ -9,12 +9,6 @@ O **Inspector** é uma aplicação web, escrita em Python, que analisa vários t
 - Elaborar Matriz de Planejamento: Opção para elaborar uma matriz de planejamento de forma interativa.
 - Analisar Conversas Whatsapp: Permite analisar conversas do WhatsApp.
 - Escrever Relatórios: Página para escrever relatórios.
-
-## Documentação
-
-A documentação do código encontra-se em:
-
-`https://andrecorumba.github.io/inspector/`
 
 ## Pré-requisitos
 

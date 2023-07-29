@@ -1,0 +1,3 @@
+# Pastas
+
+::: inspector.pastas

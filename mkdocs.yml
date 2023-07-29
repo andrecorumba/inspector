@@ -1,0 +1,8 @@
+site_name: "Inspector"
+
+theme:
+  name: "material"
+
+plugins:
+- search
+- mkdocstrings
