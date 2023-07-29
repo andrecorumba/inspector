@@ -14,7 +14,7 @@ O **Inspector** é uma aplicação web, escrita em Python, que analisa vários t
 
 A documentação do código encontra-se em:
 
-`https://andrecorumba.github.io/inspector/`
+https://andrecorumba.github.io/inspector/
 
 ## Pré-requisitos
 
