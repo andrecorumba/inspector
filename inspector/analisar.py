@@ -8,14 +8,15 @@ import openai
 from dotenv import load_dotenv, find_dotenv
 
 from langchain.prompts import PromptTemplate
-from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from langchain.vectorstores.chroma import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
-# from langchain.chains import VectorDBQA
+from langchain.chains import RetrievalQA
+from langchain.chains import VectorDBQA
 
 # Importando módulos internos
 import processar_llm
+from processar_llm import CHUNK_SIZE
 
 def analisar_documentos_pdf(usuario):
     """
@@ -62,28 +63,28 @@ def analisar_documentos_pdf(usuario):
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 
     openai_embeddings = OpenAIEmbeddings(openai_api_key=openai.api_key,
-                                    chunk_size=500,
-                                    max_retries=10)
-
-    # vector_db = Chroma(persist_directory=pasta_vectordb, 
-    #                 embedding_function=openai_embeddings)
+                                         chunk_size=processar_llm.CHUNK_SIZE,
+                                         max_retries=10)
 
     vector_db = Chroma.from_documents(documents=docs_splited,
-                                embedding=openai_embeddings,
-                                collection_name="langchain_store",
-                                persist_directory=pasta_vectordb)
-
-    vector_db.persist()
+                                      embedding=openai_embeddings,
+                                      collection_name="langchain_store",
+                                      persist_directory=pasta_vectordb)
+    # vector_db.persist()
 
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=vector_db.as_retriever(),
         return_source_documents=True,
         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
+
+    # vector_db = Chroma(persist_directory=pasta_vectordb, 
+    #                    embedding_function=openai_embeddings)
     # qa_chain = VectorDBQA.from_chain_type(llm=llm, 
     #                                       chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}, 
     #                                       vectorstore=vector_db,
     #                                       return_source_documents=True)
+
     # Pergunta e resposta
 
     #query = st.text_input('Pergunta:')

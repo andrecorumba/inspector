@@ -11,7 +11,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores.chroma import Chroma
 
-CHUNK_SIZE = 500
+CHUNK_SIZE = 1000
 
 def processar_llm(pasta_do_trabalho):
     """
