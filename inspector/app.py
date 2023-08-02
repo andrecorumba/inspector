@@ -1,12 +1,15 @@
 # Importando módulos externos
 import streamlit as st
 from streamlit_option_menu import option_menu
+import os
 
 # Importando módulos internos
 import documentos
 import password
 import analisar
+import processar_llm
 
+from password import usuario
 
 def main():
     '''
@@ -17,56 +20,57 @@ def main():
     
         # Menu Lateral
         with st.sidebar:
-            option = option_menu("Versão Web v.0.1.0",
+
+            st.write("Usuário da sessão:", password.usuario)
+
+            option = option_menu("Inspector v.0.1.0",
                                 options=["Home", 
                                         "Carregar Documentos", 
-                                        "Analisar Documentos",
-                                        "Elaborar Matriz de Planejamento",
-                                        "Analisar Conversas Whatsapp",
-                                        "Escrever Relatórios"],
+                                        "Analisar Documentos"],
                                 
                                 # Ícones de https://icons.getbootstrap.com/
                                 icons=['house', 
                                        "filetype-pdf",
-                                       "search",
-                                       "table",
-                                       "whatsapp",
-                                       "pencil"])
-            
+                                       "search"])            
         # Página Home
         if option == "Home":
             st.title("Home")
-            st.write("Página inicial do app.")   
+            st.markdown("""O **Inspector** é uma aplicação web, escrita em Python, 
+                        que analisa vários tipos de documentos.
+                        """)   
 
         # Página Carregar Documentos
         elif option == "Carregar Documentos":
             st.title("Carregar Documentos")
             st.write("Página para analisar documentos.")
             
-            documentos.analisador_arquivos_pdf('andrelmr')
+            documentos.analisador_arquivos_pdf(password.usuario)
 
         # Página Analisar Documentos
-        elif option == "Analisar Documentos":
-            st.title("Analisar Documentos")
-            st.write("Página para analisar documentos.")
-
-            analisar.analisar_documentos_pdf('andrelmr')
-
-        # Página Elaborar Matriz de Planejamento
-        elif option == "Elaborar Matriz de Planejamento":
-            st.title("Elaborar Matriz de Planejamento")
-            st.write("Página para elaborar matriz de planejamento.")
-
-        # Página Analisar Conversas Whatsapp
-        elif option == "Analisar Conversas Whatsapp":
-            st.title("Analisar Conversas Whatsapp")
-            st.write("Página para analisar conversas do whatsapp.")
+        elif option == "Analisar Documentos":            
+            try:
+                lista_de_trabalhos_usuario = os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                                                     '..', 
+                                                                     'data', 
+                                                                     usuario))
+            
+                with st.sidebar:
+                    option_trabalho = st.selectbox(label="Lista de Trabalhos",
+                                          options=lista_de_trabalhos_usuario)
+                    st.write('Você Selecionou:', option_trabalho)
+                    pasta_do_trabalho = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                                     '..', 
+                                                     'data', 
+                                                     usuario, 
+                                                     option_trabalho)
+                    
+                                                     
+                # Chama a função com o LLM para analisar os documentos
+                analisar.analisar_documentos_pdf(password.usuario, option_trabalho)
+                                            
+            except FileNotFoundError:
+                st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+                return
         
-        # Página Escrever Relatórios
-        elif option == "Escrever Relatórios":
-            st.title("Escrever Relatórios")
-            st.write("Página para escrever relatórios.")
-
-
 if __name__ == '__main__':
     main()
