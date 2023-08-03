@@ -18,6 +18,7 @@ def main():
 
     if password.check_password():
     
+    
         # Menu Lateral
         with st.sidebar:
 
@@ -47,12 +48,13 @@ def main():
             documentos.analisador_arquivos_pdf(password.usuario)
 
         # Página Analisar Documentos
-        elif option == "Analisar Documentos":            
+        elif option == "Analisar Documentos":   
+
             try:
                 lista_de_trabalhos_usuario = os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                                                      '..', 
                                                                      'data', 
-                                                                     usuario))
+                                                                     password.usuario))
             
                 with st.sidebar:
                     option_trabalho = st.selectbox(label="Lista de Trabalhos",
@@ -61,12 +63,11 @@ def main():
                     pasta_do_trabalho = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                                      '..', 
                                                      'data', 
-                                                     usuario, 
+                                                     password.usuario, 
                                                      option_trabalho)
                     
-                                                     
-                # Chama a função com o LLM para analisar os documentos
-                analisar.analisar_documentos_pdf(password.usuario, option_trabalho)
+                # Analisar Documentos                                   
+                analisar.pergunta_do_usuario(password.usuario, option_trabalho)
                                             
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')

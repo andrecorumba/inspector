@@ -6,6 +6,7 @@ import os
 import chave
 import pastas
 import processar_llm
+import analisar
 
 def analisador_arquivos_pdf(usuario):
     """
@@ -27,6 +28,7 @@ def analisador_arquivos_pdf(usuario):
     # Processar LLM na pasta dos arquivos
     if pasta_do_trabalho:
         processar_llm.processar_llm(pasta_do_trabalho)
+        analisar.pre_analise(usuario, chave_do_trabalho)
 
 
 def upload_arquivos(pasta_usuario, chave_do_trabalho):
