@@ -51,20 +51,18 @@ def analisar_documentos_pdf(usuario, option, query, template):
                            embedding_function=openai_embeddings)
 
 
-       # if query := st.chat_input('Pergunta:'):
+        # Q&A a partir do RetrievalQA
+        qa_chain = RetrievalQA.from_chain_type(
+            llm=llm,
+            retriever=vector_db.as_retriever(),
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
 
-            # Q&A a partir do RetrievalQA
-            # qa_chain = RetrievalQA.from_chain_type(
-            #     llm=llm,
-            #     retriever=vector_db.as_retriever(),
-            #     return_source_documents=True,
-            #     chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
-
-            # Q&A a partir do VectorDBQA
-        qa_chain = VectorDBQA.from_chain_type(llm=llm,
-                                                vectorstore=vector_db,
-                                                return_source_documents=True,
-                                                chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
+        # Q&A a partir do VectorDBQA
+        # qa_chain = VectorDBQA.from_chain_type(llm=llm,
+        #                                         vectorstore=vector_db,
+        #                                         return_source_documents=True,
+        #                                         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
         
         # Processa a pregunta no modelo e retorna a resposta
         with st.spinner("Processando Pergunta .... 💫"):
