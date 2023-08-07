@@ -5,6 +5,8 @@ import os
 
 import openai
 
+import json
+
 from dotenv import load_dotenv, find_dotenv
 
 from langchain.prompts import PromptTemplate
@@ -26,6 +28,8 @@ def analisar_documentos_pdf(usuario, option, query, template):
     # Carrega a API Key do OpenAI
     _ = load_dotenv(find_dotenv())
     openai.api_key = os.environ['OPENAI_API_KEY']
+
+    lista_respostas = []
 
     try:
         # Carrega as pastas de trabalho
@@ -57,12 +61,6 @@ def analisar_documentos_pdf(usuario, option, query, template):
             retriever=vector_db.as_retriever(),
             return_source_documents=True,
             chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
-
-        # Q&A a partir do VectorDBQA
-        # qa_chain = VectorDBQA.from_chain_type(llm=llm,
-        #                                         vectorstore=vector_db,
-        #                                         return_source_documents=True,
-        #                                         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT})
         
         # Processa a pregunta no modelo e retorna a resposta
         with st.spinner("Processando Pergunta .... 💫"):
@@ -72,14 +70,19 @@ def analisar_documentos_pdf(usuario, option, query, template):
             if query == " ":
                 query = "Perguntas Sugeridas na Pré-Análise:"
             
+            # Imprime o resultado na tela
             st.write(f"{query}")     
             st.write(resposta['result'])
             st.json(resposta['source_documents'], expanded=False)
 
+            dict_resposta = {'query': query, 
+                             'result': resposta['result']}
+                       
+            # Salva a pergunta e a resposta em um arquivo json
+            salvar_em_json(dict_resposta, os.path.join(pasta_database, 'qa.json'))
+
             # Salva a pergunta e a resposta em um arquivo txt
-            with open(os.path.join(pasta_database, 'qa.txt'), 'a', encoding='utf-8') as f:
-                f.write(f'Pergunta: {query}\n')
-                f.write(f'Resposta: {resposta["result"]}\n\n')
+            salvar_em_txt(dict_resposta, os.path.join(pasta_database, 'qa.txt'))
 
     
     except FileNotFoundError:
@@ -174,3 +177,44 @@ def pergunta_do_usuario(usuario, option):
 
     if query := st.chat_input('Pergunta:'):
         analisar_documentos_pdf(usuario, option, query, template)
+
+def salvar_em_json(dados, caminho_arquivo):
+    ''' 
+    Função que salva os dados em um arquivo JSON.
+
+    Parâmetros:
+    dados: dict
+        Dicionário com os dados a serem salvos.
+
+    caminho_arquivo: str
+        Caminho do arquivo JSON.
+    '''
+
+    # Abre o arquivo JSON em modo de leitura e carrega os dados existentes (se houver).
+    lista_respostas = []
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "r", encoding="utf-8") as f:
+            lista_respostas = json.load(f)
+            
+    # Adiciona os novos dados à lista
+    lista_respostas.append(dados)
+    
+    # Abre o arquivo JSON em modo de gravação e escreve os dados no arquivo
+    with open(caminho_arquivo, "w", encoding="utf-8") as f:
+        json.dump(lista_respostas, f, ensure_ascii=False, indent=4)
+
+def salvar_em_txt(dados, caminho_arquivo):
+    ''' 
+    Função que salva os dados em um arquivo txt.
+
+    Parâmetros:
+    dados: dict
+        Dicionário com os dados a serem salvos.
+
+    caminho_arquivo: str
+        Caminho do arquivo txt.
+    '''
+    
+    with open(caminho_arquivo, 'a', encoding='utf-8') as f:
+        f.write(f"Pergunta: {dados['query']}\n")
+        f.write(f"Resposta: {dados['result']}\n\n")
