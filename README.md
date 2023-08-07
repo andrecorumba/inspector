@@ -134,3 +134,28 @@ O arquivo `processar_llm.py` contém duas funções principais:
 - `os`: Uma biblioteca que permite interagir com o sistema operacional, como criar pastas e manipular arquivos.
 - `string`: Uma biblioteca para manipular strings em Python, utilizada para gerar chaves aleatórias.
 - `random`: Uma biblioteca para geração de números aleatórios em Python.
+
+## Para Depurar o Projeto no VSCode:
+
+O arquivo launch.json é uma parte essencial do ambiente de desenvolvimento para projetos Python no Visual Studio Code. Ele é usado para configurar e definir as configurações de depuração (debug) para um projeto específico. No exemplo abaixo, explicarei as diferentes propriedades do arquivo launch.json e o que elas significam
+Altere o arquivo `launch.json` constante da pasta `.vscode` para o conteúdo a seguir:
+
+```
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Streamlit",
+            "type": "python",
+            "request": "launch",
+            "program": ".venv/bin/streamlit",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ["run", "inspector/app.py"]
+        }
+    ]
+}
+```
