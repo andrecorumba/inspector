@@ -40,13 +40,33 @@ def cria_pastas(pasta_usuario, chave):
         if not os.path.exists(subfolder_path):
             os.makedirs(subfolder_path)
     
-    # Retorna o caminho das pastas
-    return (pasta_do_trabalho, 
-            pasta_vectordb, 
-            pasta_database, 
-            pasta_temporaria,
-            pasta_aquivos)
+
+def pega_pasta(usuario, chave_do_trabalho, tipo_de_pasta):
+    if tipo_de_pasta == 'pasta_do_usuario':
+        pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                    '..', 
+                                    'data', 
+                                    usuario)
+
+    elif tipo_de_pasta == 'pasta_do_trabalho':
+        pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                    '..', 
+                                    'data', 
+                                    usuario, 
+                                    chave_do_trabalho)
+
+    else:
+        pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                    '..', 
+                                    'data', 
+                                    usuario, 
+                                    chave_do_trabalho,
+                                    tipo_de_pasta)
+    
+    return pasta
+
+
 
 if __name__ == '__main__':
-    cria_pastas('/Users/andreluiz/python-projects/auditor-copilot/data/andrelmr', 
-                'documentos_12345678')
+    cria_pastas('data/usuario', 
+                'd_12345678')

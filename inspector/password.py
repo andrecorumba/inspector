@@ -3,19 +3,21 @@ import streamlit as st
 usuario = ''
 
 def check_password():
-    """Returns `True` if the user had a correct password.
+    """
+    Retorna `True` se o usuário inseriu o password correto.
 
+    Código original disponível em:
     https://docs.streamlit.io/knowledge-base/deploy/authentication-without-sso
-    
     """
 
     def password_entered():
+        """Checa se o password inserido é correto."""
+
         global usuario
-        """Checks whether a password entered by the user is correct."""
         if (
             st.session_state["username"] in st.secrets["passwords"]
             and st.session_state["password"] == st.secrets["passwords"][st.session_state["username"]]
-        ):
+            ):
             st.session_state["password_correct"] = True
             st.session_state["username"]
             # del st.session_state["password"]  # don't store username + password
@@ -26,7 +28,7 @@ def check_password():
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        # First run, show inputs for username + password.
+        # Primeira execução, mostra inputs para usuário.
         st.text_input("Username", 
                       on_change=password_entered, 
                       key="username")
@@ -36,8 +38,9 @@ def check_password():
                       key="password"
         )
         return False
+    
     elif not st.session_state["password_correct"]:
-        # Password not correct, show input + error.
+        # Password nnão está correto, mostra input + error.
         st.text_input("Username", 
                       on_change=password_entered, 
                       key="username")
@@ -47,6 +50,7 @@ def check_password():
         )
         st.error("😕 Usuário não conhecido ou password incorreto.")
         return False
+    
     else:
-        # Password correct.
+        # Password correto.
         return True

@@ -3,24 +3,85 @@ from streamlit_option_menu import option_menu
 
 import os
 
-import openai
-
 import json
+
+import openai
 
 from dotenv import load_dotenv, find_dotenv
 
+from langchain.document_loaders.pdf import PyPDFDirectoryLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores.chroma import Chroma
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
-from langchain.vectorstores.chroma import Chroma
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
-from langchain.chains import VectorDBQA
 
 # Importando módulos internos
-import processar_llm
-from processar_llm import CHUNK_SIZE
+import chave
+import pastas
 
-def analisar_documentos_pdf(usuario, option, query, template):
+CHUNK_SIZE = 500
+
+
+
+def pdf_load_split_vector(usuario, chave_do_trabalho):
+    """
+    Função que executa os passos de Load, Embedding e VectorDB do LangChain.
+    Lê os arquivos PDF da pasta de trabalho, divide em partes menores e cria o VectorDB.
+
+    Parâmetros:
+    pasta_do_trabalho (str): Caminho absoluto para a pasta do trabalho.
+
+    Retorno:
+    None
+    """
+    
+    # Carrega a API Key do OpenAI
+    _ = load_dotenv(find_dotenv())
+    openai.api_key = os.environ['OPENAI_API_KEY']
+
+    # Carrega a pasta com os arquivos
+    pasta_arquivos = pastas.pega_pasta(usuario, chave_do_trabalho, 'files')
+    
+    with st.spinner("Processando LLM .... 💫"):
+       
+        #docs_splited = carrega_pdf(pasta_arquivos)
+
+        # LOAD -  Carrega os arquivos pdf
+        loader = PyPDFDirectoryLoader(pasta_arquivos)
+        documents = loader.load()
+
+
+        # SPLIT - Divide os documentos em pedaços menores
+        text_splitter = CharacterTextSplitter.from_tiktoken_encoder(model_name="gpt-3.5-turbo-16k",
+                                                                    chunk_size=CHUNK_SIZE,
+                                                                    chunk_overlap=0)
+        docs_splited = text_splitter.split_documents(documents)
+
+
+        # EMBEDDING - Cria os embeddings
+        openai_embeddings = OpenAIEmbeddings(openai_api_key=openai.api_key,
+                                            chunk_size=CHUNK_SIZE,
+                                            max_retries=3)
+
+
+        # Diretório persistente
+        pasta_vectordb = pastas.pega_pasta(usuario, chave_do_trabalho, 'vectordb')
+
+
+        # VECTOR_DB - Cria o VectorDB
+        vector_db = Chroma.from_documents(documents=docs_splited,
+                                        embedding=openai_embeddings,
+                                        collection_name="langchain_store",
+                                        persist_directory=pasta_vectordb)
+
+
+        # Persiste no diretório
+        vector_db.persist()
+
+
+def pdf_analizer(usuario, option, query, template):
     """
     Função que analisa arquivos PDF.
     """
@@ -46,7 +107,7 @@ def analisar_documentos_pdf(usuario, option, query, template):
 
         # Construtor do embedding
         openai_embeddings = OpenAIEmbeddings(openai_api_key=openai.api_key,
-                                            chunk_size=processar_llm.CHUNK_SIZE,
+                                            chunk_size=CHUNK_SIZE,
                                             max_retries=3)
         
         # Construtor do VectorDB a partir do banco persistente
@@ -90,7 +151,7 @@ def analisar_documentos_pdf(usuario, option, query, template):
         return
     
 
-def pre_analise(usuario, option):
+def generate_first_questions(usuario, option):
 
     template = '''
                 Como auditor(a) especializado(a) em Auditoria Governamental, seu objetivo é analisar 
@@ -125,10 +186,10 @@ def pre_analise(usuario, option):
                 Pergunta: Você deverá fornecer as perguntas.{question}'''
     
     query = " "
-    analisar_documentos_pdf(usuario, option, query, template)
+    pdf_analizer(usuario, option, query, template)
     
 
-def pergunta_do_usuario(usuario, option):
+def user_questions(usuario, option):
 
     template = '''
                 Como auditor(a) especializado(a) em Auditoria Governamental, seu objetivo é analisar 
@@ -176,7 +237,7 @@ def pergunta_do_usuario(usuario, option):
                 Resposta formal em português:'''
 
     if query := st.chat_input('Pergunta:'):
-        analisar_documentos_pdf(usuario, option, query, template)
+        pdf_analizer(usuario, option, query, template)
 
 def salvar_em_json(dados, caminho_arquivo):
     ''' 
