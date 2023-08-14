@@ -23,12 +23,14 @@ def main():
             option = option_menu("Inspector v.0.1.0",
                                 options=["Home", 
                                         "Carregar Documentos", 
-                                        "Analisar Documentos"],
+                                        "Analisar Documentos",
+                                        "Identificar Riscos"],
                                 
                                 # Ícones de https://icons.getbootstrap.com/
                                 icons=['house', 
                                        "filetype-pdf",
-                                       "search"])            
+                                       "search",
+                                       "activity"])            
         # Página Home
         if option == "Home":
             st.title("Home")
@@ -75,9 +77,34 @@ def main():
 
                 # Analisar Documentos                                   
                 pdf_inspector.user_questions(password.usuario, option_trabalho)
+                                                       
+            except FileNotFoundError:
+                st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+                return
+            
+        elif option == "Identificar Riscos":   
+            try:
+
+                lista_de_trabalhos_usuario = []
+                for item in os.listdir(pastas.pega_pasta(usuario=password.usuario,
+                                                        chave_do_trabalho='todos',
+                                                        tipo_de_pasta='pasta_do_usuario')):
+                    if not item.startswith('.'):
+                        lista_de_trabalhos_usuario.append(item)
+            
+                with st.sidebar:
+                    option_trabalho = st.selectbox(label="Lista de Trabalhos",
+                                          options=lista_de_trabalhos_usuario)
+                    st.write('Você Selecionou:', option_trabalho)
+                   
+                    st.session_state['pasta_do_trabalho'] = pastas.pega_pasta(usuario=password.usuario,
+                                                                              chave_do_trabalho=option_trabalho,
+                                                                              tipo_de_pasta='pasta_do_trabalho')
                     
 
-                                            
+                # Analisar Documentos                                   
+                pdf_inspector.risk_identification(password.usuario, option_trabalho)
+            
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
                 return
