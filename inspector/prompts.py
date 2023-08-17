@@ -132,9 +132,10 @@ responda a seguinte pergunta do auditor.
 
 A resposta deve ser clara, direta e formal em português, seguindo as orientações do contexto.
 
-O formato da resposta deverá conter a descrição do risco, seguido da palavra em maíuscula RISCO.
-
-Use Temperatura 0.8
+O formato da resposta deverá conter a descrição dos riscos identificados, seguido da palavra 
+em maíuscula RISCO e o número do risco, como no exemplo a segui: 
+RISCO 1: Fragilidades nos controles internos.
+RISCO 2: Risco de superfaturamento na contratação de serviços.
 
 Você deverá responder apenas se houver uma resposta no contexto acima,
 caso contrário escreva apenas: "Não consegui encontrar a resposta.
