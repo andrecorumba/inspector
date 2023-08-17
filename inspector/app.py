@@ -1,7 +1,10 @@
 # Importando módulos externos
 import streamlit as st
 from streamlit_option_menu import option_menu
+
 import os
+
+import json
 
 # Importando módulos internos
 import password
@@ -21,7 +24,7 @@ def main():
             st.write("Usuário da sessão:", password.usuario)
 
             option = option_menu("Inspector v.0.1.0",
-                                options=["Home", 
+                                options=["Página Inicial", 
                                         "Carregar Documentos", 
                                         "Analisar Documentos",
                                         "Identificar Riscos"],
@@ -32,18 +35,15 @@ def main():
                                        "search",
                                        "activity"])            
         # Página Home
-        if option == "Home":
-            st.title("Home")
+        if option == "Página Inicial":
+            st.title("Página Inicial")
             st.markdown("""O **Inspector** é uma aplicação web, escrita em Python, 
                         que analisa vários tipos de documentos.
                         """)   
 
-        # Página Carregar Documentos
         elif option == "Carregar Documentos":
             st.title("Carregar Documentos")
             st.write("Página para analisar documentos.")
-            
-            #documentos.analisador_arquivos_pdf(password.usuario)
 
             chave_do_trabalho = upload_arquivos(type=['pdf'])
 
@@ -51,13 +51,9 @@ def main():
                 pdf_inspector.pdf_load_split_vector(password.usuario, chave_do_trabalho)
                 pdf_inspector.generate_first_questions(password.usuario, chave_do_trabalho)
 
-
-        # Página Analisar Documentos
         elif option == "Analisar Documentos":   
 
             try:
-
-                # Cria lista de trabalhos do usuário
                 lista_de_trabalhos_usuario = []
                 for item in os.listdir(pastas.pega_pasta(usuario=password.usuario,
                                                         chave_do_trabalho='todos',
@@ -74,10 +70,27 @@ def main():
                                                                               chave_do_trabalho=option_trabalho,
                                                                               tipo_de_pasta='pasta_do_trabalho')
                     
+                    st.radio('Selecione', options=['Mostrar Histório',
+                                                   'Responder Perguntas Prontas',
+                                                   'Fazer Minhas Perguntas'], 
+                                                   key='radio_show_questions')
 
-                # Analisar Documentos         
-                if query:=st.chat_input("Digite sua pergunta:"):                          
-                    pdf_inspector.user_questions(password.usuario, option_trabalho, query)
+       
+                if st.session_state['radio_show_questions'] == 'Mostrar Histório':
+                    show_all(password.usuario, option_trabalho)
+                
+                elif st.session_state['radio_show_questions'] == 'Responder Perguntas Prontas':
+                    st.multiselect('Selecione as perguntas', 
+                                   options=get_questions(password.usuario, option_trabalho),
+                                   key='multiselect_questions')
+                    
+                    if st.button('Responder'):
+                        for query in st.session_state['multiselect_questions']:
+                            pdf_inspector.user_questions(password.usuario, option_trabalho, query)
+
+                elif st.session_state['radio_show_questions'] == 'Fazer Minhas Perguntas':
+                    if query:=st.text_input("Digite sua pergunta:"):                          
+                        pdf_inspector.user_questions(password.usuario, option_trabalho, query)
                                                        
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
@@ -104,7 +117,7 @@ def main():
                     
 
                 # Analisar Documentos                 
-                if query:=st.text_input("Digite o nome e sigla da unidade auditada:"):                   
+                if query:=st.text_input("Digite o nome ou a sigla da unidade auditada:"):                   
                     pdf_inspector.risk_identifier(password.usuario, option_trabalho, query)
             
             except FileNotFoundError:
@@ -128,28 +141,21 @@ def upload_arquivos(type):
                                           type=type,
                                           accept_multiple_files=True)
     
-    # Verifica se os arquivos foram upados
     if uploaded_file_list is not None:
         if st.button('Carregar Arquivos'):
-
-            # Constrói o caminho absoluto para a pasta "data" a partir do diretório atual
             pasta_usuario = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                     '..', 
                                     'data', 
                                     password.usuario)
             
-            # Cria chave de acesso com base no tipo de trabalho (documentos)
             chave_do_trabalho = chave.cria_chave('documentos')
 
-            # Criar pasta e subpastas do trabalho do usuário
             pastas.cria_pastas(pasta_usuario, chave_do_trabalho)
 
-            # Pega pasta de arquivos
             pasta_de_arquivos = pastas.pega_pasta(password.usuario, 
                                                   chave_do_trabalho, 
                                                   'files')
                         
-            # Salva todos os arquivos upados
             for file in uploaded_file_list:
                 with open(os.path.join(pasta_de_arquivos, file.name),"wb") as f:
                     f.write((file).getbuffer())
@@ -160,6 +166,45 @@ def upload_arquivos(type):
             st.markdown(f"### Código deste trabalho: *{chave_do_trabalho}*")
     
             return chave_do_trabalho
+
+def show_all(usuario, chave_do_trabalho):
+    """ Função para mostrar todos as perguntas e respostas do trabalho.
+    
+    Parâmetros:
+    usuario (str): Nome do usuário.
+    chave_do_trabalho (str): Chave de acesso ao trabalho.
+
+    Retorno:
+    None
+    """
+
+    database_folder = pastas.pega_pasta(usuario, 
+                                        chave_do_trabalho, 
+                                        'database')
+    
+    with open(os.path.join(database_folder, 'qa.txt'), 'r') as f:
+        qa = f.readlines()
+        for line in qa:
+            st.write(line)
+
+def get_questions(user, work_key):
+    """ Função para selecionar as perguntas da pré-análise.
+    
+    Parâmetros:
+    user (str): Nome do usuário.
+    work_key (str): Chave de acesso ao trabalho.
+    """
+
+    database_folder = pastas.pega_pasta(user, 
+                                        work_key, 
+                                        'database')
+    
+    with open(os.path.join(database_folder, 'qa.json'), 'r') as f:
+        qa = json.load(f)
+        questions = qa[0]['result'].split('\n')
+
+    return questions
+
 
 if __name__ == '__main__':
     main()
