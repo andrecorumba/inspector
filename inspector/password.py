@@ -1,6 +1,6 @@
 import streamlit as st
 
-usuario = ''
+user = ''
 
 def check_password():
     """
@@ -13,7 +13,7 @@ def check_password():
     def password_entered():
         """Checa se o password inserido é correto."""
 
-        global usuario
+        global user
         if (
             st.session_state["username"] in st.secrets["passwords"]
             and st.session_state["password"] == st.secrets["passwords"][st.session_state["username"]]
@@ -22,7 +22,7 @@ def check_password():
             st.session_state["username"]
         
             del st.session_state["password"]  # don't store password
-            usuario = st.session_state["username"]
+            user = st.session_state["username"]
         else:
             st.session_state["password_correct"] = False
 

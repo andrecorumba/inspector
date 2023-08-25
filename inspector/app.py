@@ -1,4 +1,4 @@
-# Importando módulos externos
+# Import External Modules
 import streamlit as st
 from streamlit_option_menu import option_menu
 
@@ -6,35 +6,31 @@ import os
 
 import json
 
-# Importando módulos internos
+# Import internal modules
 import password
 import chave
-import pastas
+import folders
 import pdf_inspector
 
 
 def main():
-    '''Função principal do app.'''
+    """ Main function for the Inspector App. """
 
     if password.check_password():
-    
-        # Menu Lateral
         with st.sidebar:
-
-            st.write("Usuário da sessão:", password.usuario)
-
+            st.write("Usuário da sessão:", password.user)
             option = option_menu("Inspector v.0.1.0",
                                 options=["Página Inicial", 
                                         "Carregar Documentos", 
                                         "Analisar Documentos",
                                         "Identificar Riscos"],
                                 
-                                # Ícones de https://icons.getbootstrap.com/
+                                # Icons from https://icons.getbootstrap.com/
                                 icons=['house', 
                                        "filetype-pdf",
                                        "search",
                                        "activity"])            
-        # Página Home
+            
         if option == "Página Inicial":
             st.title("Página Inicial")
             st.markdown("""O **Inspector** é uma aplicação web, escrita em Python, 
@@ -45,52 +41,49 @@ def main():
             st.title("Carregar Documentos")
             st.write("Página para analisar documentos.")
 
-            chave_do_trabalho = upload_arquivos(type=['pdf'])
-
-            if chave_do_trabalho:
-                pdf_inspector.pdf_load_split_vector(password.usuario, chave_do_trabalho)
-                pdf_inspector.generate_first_questions(password.usuario, chave_do_trabalho)
+            work_key = upload_arquivos(type=['pdf'])
+            if work_key:
+                pdf_inspector.pdf_load_split_vector(password.user, work_key)
+                pdf_inspector.generate_first_questions(password.user, work_key)
 
         elif option == "Analisar Documentos":   
-
             try:
-                lista_de_trabalhos_usuario = []
-                for item in os.listdir(pastas.pega_pasta(usuario=password.usuario,
-                                                        chave_do_trabalho='todos',
-                                                        tipo_de_pasta='pasta_do_usuario')):
+                user_work_list = []
+                for item in os.listdir(folders.get_folder(user=password.user,
+                                                        work_key='todos',
+                                                        type_of_folder='user_folder')):
                     if not item.startswith('.'):
-                        lista_de_trabalhos_usuario.append(item)
+                        user_work_list.append(item)
             
                 with st.sidebar:
-                    option_trabalho = st.selectbox(label="Lista de Trabalhos",
-                                          options=lista_de_trabalhos_usuario)
-                    st.write('Você Selecionou:', option_trabalho)
-                   
-                    st.session_state['pasta_do_trabalho'] = pastas.pega_pasta(usuario=password.usuario,
-                                                                              chave_do_trabalho=option_trabalho,
-                                                                              tipo_de_pasta='pasta_do_trabalho')
+                    option_work = st.selectbox(label="Lista de Trabalhos",
+                                               options=user_work_list)
+                    st.write('Você Selecionou:', option_work)
+
+                    st.session_state['work_folder'] = folders.get_folder(user=password.user,
+                                                                              work_key=option_work,
+                                                                              type_of_folder='work_folder')
                     
                     st.radio('Selecione', options=['Mostrar Histório',
                                                    'Responder Perguntas Prontas',
                                                    'Fazer Minhas Perguntas'], 
                                                    key='radio_show_questions')
 
-       
                 if st.session_state['radio_show_questions'] == 'Mostrar Histório':
-                    show_all(password.usuario, option_trabalho)
+                    show_all(password.user, option_work)
                 
                 elif st.session_state['radio_show_questions'] == 'Responder Perguntas Prontas':
                     st.multiselect('Selecione as perguntas', 
-                                   options=get_questions(password.usuario, option_trabalho),
+                                   options=get_questions(password.user, option_work),
                                    key='multiselect_questions')
                     
                     if st.button('Responder'):
                         for query in st.session_state['multiselect_questions']:
-                            pdf_inspector.user_questions(password.usuario, option_trabalho, query)
+                            pdf_inspector.user_questions(password.user, option_work, query)
 
                 elif st.session_state['radio_show_questions'] == 'Fazer Minhas Perguntas':
                     if query:=st.text_input("Digite sua pergunta:"):                          
-                        pdf_inspector.user_questions(password.usuario, option_trabalho, query)
+                        pdf_inspector.user_questions(password.user, option_work, query)
                                                        
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
@@ -98,27 +91,29 @@ def main():
             
         elif option == "Identificar Riscos":   
             try:
-
-                lista_de_trabalhos_usuario = []
-                for item in os.listdir(pastas.pega_pasta(usuario=password.usuario,
-                                                        chave_do_trabalho='todos',
-                                                        tipo_de_pasta='pasta_do_usuario')):
+                user_work_list = []
+                for item in os.listdir(folders.get_folder(user=password.user,
+                                                         work_key='todos',
+                                                         type_of_folder='user_folder')):
                     if not item.startswith('.'):
-                        lista_de_trabalhos_usuario.append(item)
+                        user_work_list.append(item)
             
                 with st.sidebar:
-                    option_trabalho = st.selectbox(label="Lista de Trabalhos",
-                                          options=lista_de_trabalhos_usuario)
-                    st.write('Você Selecionou:', option_trabalho)
+                    option_work = st.selectbox(label="Lista de Trabalhos",
+                                               options=user_work_list)
+                    st.write('Você Selecionou:', option_work)
                    
-                    st.session_state['pasta_do_trabalho'] = pastas.pega_pasta(usuario=password.usuario,
-                                                                              chave_do_trabalho=option_trabalho,
-                                                                              tipo_de_pasta='pasta_do_trabalho')
-                    
+                    st.session_state['work_folder'] = folders.get_folder(user=password.user,
+                                                                              work_key=option_work,
+                                                                              type_of_folder='work_folder')
 
-                # Analisar Documentos                 
-                if agency:=st.text_input("Digite o nome ou a sigla da unidade auditada:"):                   
-                    pdf_inspector.risk_identifier(password.usuario, option_trabalho, agency)
+                # Risk Identifier                 
+                if agency:=st.text_input("Digite o nome ou a sigla da unidade auditada:"): 
+                    with st.spinner("Processando Pergunta .... 💫"):                  
+                        risks = pdf_inspector.risk_identifier(password.user, option_work, agency)
+                    
+                    st.write(f"Riscos Identificados para a Unidade: {agency}")     
+                    st.write(risks)
             
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
@@ -127,60 +122,61 @@ def main():
 
 def upload_arquivos(type):
     """
-    Função para fazer o upload dos arquivos para o servidor.
+    Function to upload files to the user folder.
 
-    Parâmetros:
-    pasta_usuario (str): Caminho absoluto para a pasta do usuário.
-    chave_do_trabalho (str): Chave de acesso ao trabalho.
+    Parameters:
+    type (list): List of file types.
 
-    Retorno:
-    pasta_do_trabalho (str): Caminho absoluto para a pasta do trabalho.
+    Return:
+    work_key (str): Work key.
     """
 
-    uploaded_file_list = st.file_uploader('Selecione os arquivos PDF para análise', 
-                                          type=type,
-                                          accept_multiple_files=True)
+    st.file_uploader('Selecione os arquivos PDF para análise', 
+                     type=type,
+                     accept_multiple_files=True,
+                     key='uploaded_file_list')
     
-    if uploaded_file_list is not None:
+    if st.session_state['uploaded_file_list'] is not None:
         if st.button('Carregar Arquivos'):
-            pasta_usuario = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                                    '..', 
-                                    'data', 
-                                    password.usuario)
+            user_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                        '..', 
+                                        'data', 
+                                        password.user)
             
-            chave_do_trabalho = chave.cria_chave('documentos')
+            work_key = chave.cria_chave('documentos')
 
-            pastas.cria_pastas(pasta_usuario, chave_do_trabalho)
+            folders.create_folders(user_folder, work_key)
 
-            pasta_de_arquivos = pastas.pega_pasta(password.usuario, 
-                                                  chave_do_trabalho, 
+            files_folder = folders.get_folder(password.user, 
+                                                  work_key, 
                                                   'files')
                         
-            for file in uploaded_file_list:
-                with open(os.path.join(pasta_de_arquivos, file.name),"wb") as f:
+            for file in st.session_state['uploaded_file_list']:
+                with open(os.path.join(files_folder, file.name),"wb") as f:
                     f.write((file).getbuffer())
             
-            quantidade_arquivos = len(os.listdir(pasta_de_arquivos))
+            files_lenght = len(os.listdir(files_folder))
 
-            st.success(f"Sucesso! Quantidade de Arquivos Carregados: {quantidade_arquivos}")
-            st.markdown(f"### Código deste trabalho: *{chave_do_trabalho}*")
+            st.success(f"Sucesso! Quantidade de Arquivos Carregados: {files_lenght}")
+            st.markdown(f"### Código deste trabalho: *{work_key}*")
     
-            return chave_do_trabalho
+            return work_key
 
-def show_all(usuario, chave_do_trabalho):
-    """ Função para mostrar todos as perguntas e respostas do trabalho.
-    
-    Parâmetros:
-    usuario (str): Nome do usuário.
-    chave_do_trabalho (str): Chave de acesso ao trabalho.
+def show_all(user, work_key):
+    """
+    Function to show all questions and answers.
 
-    Retorno:
+    Parameters:
+    user (str): User name.
+    work_key (str): Work key.
+
+    Return:
     None
     """
 
-    database_folder = pastas.pega_pasta(usuario, 
-                                        chave_do_trabalho, 
-                                        'database')
+    database_folder = folders.get_folder(user, 
+                                         work_key, 
+                                         'database')
     
     with open(os.path.join(database_folder, 'qa.txt'), 'r') as f:
         qa = f.readlines()
@@ -188,14 +184,18 @@ def show_all(usuario, chave_do_trabalho):
             st.write(line)
 
 def get_questions(user, work_key):
-    """ Função para selecionar as perguntas da pré-análise.
-    
-    Parâmetros:
-    user (str): Nome do usuário.
-    work_key (str): Chave de acesso ao trabalho.
+    """
+    Funtion to get all questions.
+
+    Parameters:
+    user (str): User name.
+    work_key (str): Work key.
+
+    Return:
+    questions (list): List of questions.
     """
 
-    database_folder = pastas.pega_pasta(user, 
+    database_folder = folders.get_folder(user, 
                                         work_key, 
                                         'database')
     

@@ -1,3 +1,4 @@
+# Import External Modules
 import streamlit as st
 from streamlit_option_menu import option_menu
 
@@ -9,6 +10,7 @@ import json
 
 import openai
 
+
 from dotenv import load_dotenv, find_dotenv
 
 from langchain.document_loaders.pdf import PyPDFDirectoryLoader
@@ -19,14 +21,14 @@ from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.chains.llm import LLMChain
+from langchain.callbacks import get_openai_callback
 
-# Importando módulos internos
+# Import internal modules
 import chave
-import pastas
+import folders
 from prompts import FIRST_QUESTIONS_PROMPT, USER_QUESTIONS_PROMPT, RISK_IDENTIFIER_PROMPT
 
 CHUNK_SIZE = 500
-
 
 def pdf_load_split_vector(usuario, chave_do_trabalho):
     """
@@ -44,7 +46,7 @@ def pdf_load_split_vector(usuario, chave_do_trabalho):
     _ = load_dotenv(find_dotenv())
     openai.api_key = os.environ['OPENAI_API_KEY']
 
-    pasta_arquivos = pastas.pega_pasta(usuario, chave_do_trabalho, 'files')
+    pasta_arquivos = folders.get_folder(usuario, chave_do_trabalho, 'files')
     
     with st.spinner("Processando LLM .... 💫"):
         
@@ -66,7 +68,7 @@ def pdf_load_split_vector(usuario, chave_do_trabalho):
 
 
         # Diretório persistente
-        pasta_vectordb = pastas.pega_pasta(usuario, chave_do_trabalho, 'vectordb')
+        pasta_vectordb = folders.get_folder(usuario, chave_do_trabalho, 'vectordb')
 
 
         # VECTOR_DB - Cria o VectorDB
@@ -75,7 +77,6 @@ def pdf_load_split_vector(usuario, chave_do_trabalho):
                                         collection_name="langchain_store",
                                         persist_directory=pasta_vectordb)
         vector_db.persist()
-
 
 def pdf_analizer(usuario, option, query, llm, prompt):
     """
@@ -146,47 +147,53 @@ def pdf_analizer(usuario, option, query, llm, prompt):
         st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
         return
     
-
 def generate_first_questions(usuario, option):
     query = " "
     llm = init_llm_openai(temperature=0.4, model="gpt-3.5-turbo-16k")
-    pdf_analizer(usuario, option, query, llm, FIRST_QUESTIONS_PROMPT)
-    
+    pdf_analizer(usuario, option, query, llm, FIRST_QUESTIONS_PROMPT)    
 
 def user_questions(usuario, option, query):
     llm = init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, USER_QUESTIONS_PROMPT)
 
-
-# def risk_identifier(user, option, query):
-#     llm = processing_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
-#     pdf_analizer(user, option, query, llm, RISK_IDENTIFIER_PROMPT, 'risk_identifier')
-
 def risk_identifier(user, option, agency):
+    '''
+    Funcion that identifies risks in the agency.
+    The model, gpt-3.5-turbo-16k, can receive a maximum of 16384 tokens per request.
 
-    # Inicializa o LLM
-    # Model gpt-3.5-turbo-16k. Max Tokens 16,384 tokens
+    Parameters:
+    user (str): User name.
+    option (str): Option of analysis.
+    agency (str): Agency name.
 
+    Return:
+    risks (list): List of risks.
+    '''
+    
+    # Initilize the model
     llm = init_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
     
-    # Conecta ao banco de dados persistido dos documentos
-    list_docs_splited = sqlite_connection(pastas.pega_pasta(user, option, 'vectordb'))
+    # Conect to database
+    list_docs_splited = sqlite_connection(folders.get_folder(user, option, 'vectordb'))
 
     llm_chain = LLMChain(llm=llm, 
                          prompt=RISK_IDENTIFIER_PROMPT)
-
-    # Executa passando todos os documentos no contexto    
-    # llm_chain.run({"context": list_docs_splited})
+    
+    # ISSUE: Essa parte precisa ser ajustada para pegar o tamanho do token dos documentos antes de dividir
 
     # Executa passando metade dos documentos no contexto por vez
     length_of_middle = len(list_docs_splited)//2
-    for i in range(0, len(list_docs_splited), length_of_middle):
-        llm_chain.run({'agency': agency,
-                       'context': list_docs_splited[i:i+length_of_middle]})
+    risks = []
+    with get_openai_callback() as cb:
+        for i in range(0, len(list_docs_splited), length_of_middle):
+            risks.append(llm_chain.run({'agency': agency,
+                            'context': list_docs_splited[i:i+length_of_middle]}))
+    st.write(cb)
 
-
-
-
+    # ISSUE: Precisa gravar em json
+    
+    return risks
+    
 
 def sqlite_connection(vectordb_folder):
     # Conectando ao banco de dados
@@ -207,9 +214,6 @@ def sqlite_connection(vectordb_folder):
 
     # Imprimindo a lista de resultados
     return list_docs_splited
-
-
-
 
 def salvar_em_json(dados, caminho_arquivo):
     ''' 
