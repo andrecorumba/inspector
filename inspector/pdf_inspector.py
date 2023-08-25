@@ -3,6 +3,8 @@ from streamlit_option_menu import option_menu
 
 import os
 
+import sqlite3
+
 import json
 
 import openai
@@ -16,6 +18,7 @@ from langchain.vectorstores.chroma import Chroma
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
+from langchain.chains.llm import LLMChain
 
 # Importando módulos internos
 import chave
@@ -55,7 +58,6 @@ def pdf_load_split_vector(usuario, chave_do_trabalho):
                                                                     chunk_size=CHUNK_SIZE,
                                                                     chunk_overlap=0)
         docs_splited = text_splitter.split_documents(documents)
-
 
         # EMBEDDING - Cria os embeddings
         openai_embeddings = OpenAIEmbeddings(openai_api_key=openai.api_key,
@@ -115,8 +117,7 @@ def pdf_analizer(usuario, option, query, llm, prompt):
         vector_db = Chroma(collection_name="langchain_store",
                            persist_directory=pasta_vectordb, 
                            embedding_function=openai_embeddings)
-
-
+        
         # Q&A a partir do RetrievalQA
         qa_chain = RetrievalQA.from_chain_type(
             llm=llm,
@@ -148,18 +149,66 @@ def pdf_analizer(usuario, option, query, llm, prompt):
 
 def generate_first_questions(usuario, option):
     query = " "
-    llm = processing_llm_openai(temperature=0.4, model="gpt-3.5-turbo-16k")
+    llm = init_llm_openai(temperature=0.4, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, FIRST_QUESTIONS_PROMPT)
     
 
 def user_questions(usuario, option, query):
-    llm = processing_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
+    llm = init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, USER_QUESTIONS_PROMPT)
 
 
-def risk_identifier(user, option, query):
-    llm = processing_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
-    pdf_analizer(user, option, query, llm, RISK_IDENTIFIER_PROMPT)
+# def risk_identifier(user, option, query):
+#     llm = processing_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
+#     pdf_analizer(user, option, query, llm, RISK_IDENTIFIER_PROMPT, 'risk_identifier')
+
+def risk_identifier(user, option, agency):
+
+    # Inicializa o LLM
+    # Model gpt-3.5-turbo-16k. Max Tokens 16,384 tokens
+
+    llm = init_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
+    
+    # Conecta ao banco de dados persistido dos documentos
+    list_docs_splited = sqlite_connection(pastas.pega_pasta(user, option, 'vectordb'))
+
+    llm_chain = LLMChain(llm=llm, 
+                         prompt=RISK_IDENTIFIER_PROMPT)
+
+    # Executa passando todos os documentos no contexto    
+    # llm_chain.run({"context": list_docs_splited})
+
+    # Executa passando metade dos documentos no contexto por vez
+    length_of_middle = len(list_docs_splited)//2
+    for i in range(0, len(list_docs_splited), length_of_middle):
+        llm_chain.run({'agency': agency,
+                       'context': list_docs_splited[i:i+length_of_middle]})
+
+
+
+
+
+def sqlite_connection(vectordb_folder):
+    # Conectando ao banco de dados
+    conn = sqlite3.connect(os.path.join(vectordb_folder, 'chroma.sqlite3'))  # Substitua pelo nome do seu banco de dados
+    cursor = conn.cursor()
+
+    # Definindo a query
+    query = "SELECT c1 FROM embedding_fulltext_content"
+
+    # Executando a query
+    cursor.execute(query)
+
+    # Obtendo os resultados em forma de lista
+    list_docs_splited = [row[0] for row in cursor.fetchall()]
+
+    # Fechando a conexão com o banco de dados
+    conn.close()
+
+    # Imprimindo a lista de resultados
+    return list_docs_splited
+
+
 
 
 def salvar_em_json(dados, caminho_arquivo):
@@ -193,5 +242,5 @@ def salvar_em_txt(dados, caminho_arquivo):
         f.write(f"Pergunta: {dados['query']}\n\n")
         f.write(f"Resposta: {dados['result']}\n\n")
 
-def processing_llm_openai(temperature, model):
+def init_llm_openai(temperature, model):
     return OpenAI(temperature=temperature, model_name=model)

@@ -117,8 +117,8 @@ def main():
                     
 
                 # Analisar Documentos                 
-                if query:=st.text_input("Digite o nome ou a sigla da unidade auditada:"):                   
-                    pdf_inspector.risk_identifier(password.usuario, option_trabalho, query)
+                if agency:=st.text_input("Digite o nome ou a sigla da unidade auditada:"):                   
+                    pdf_inspector.risk_identifier(password.usuario, option_trabalho, agency)
             
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
