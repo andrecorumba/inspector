@@ -109,11 +109,15 @@ def main():
 
                 # Risk Identifier                 
                 if agency:=st.text_input("Digite o nome ou a sigla da unidade auditada:"): 
-                    with st.spinner("Processando Pergunta .... 💫"):                  
-                        risks = pdf_inspector.risk_identifier(password.user, option_work, agency)
+                    if objectives:=st.text_area("Objetivos da Auditoria:"):
+                        with st.spinner("Processando Pergunta .... 💫"):                  
+                            risks = pdf_inspector.risk_identifier(password.user, option_work, agency, objectives)
                     
-                    st.write(f"Riscos Identificados para a Unidade: {agency}")     
-                    st.write(risks)
+                        st.write(f"Riscos Identificados para a Unidade: {agency}")     
+                        st.write(risks)
+
+                        #salvar_em_json(dict_resposta, os.path.join(pasta_database, 'qa.json'))
+                        # pdf_inspector.salvar_em_txt(dict_resposta, os.path.join(pasta_database, 'qa.txt'))
             
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')

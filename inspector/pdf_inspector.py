@@ -156,7 +156,7 @@ def user_questions(usuario, option, query):
     llm = init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, USER_QUESTIONS_PROMPT)
 
-def risk_identifier(user, option, agency):
+def risk_identifier(user, option, agency, objectives):
     '''
     Funcion that identifies risks in the agency.
     The model, gpt-3.5-turbo-16k, can receive a maximum of 16384 tokens per request.
@@ -182,12 +182,13 @@ def risk_identifier(user, option, agency):
     # ISSUE: Essa parte precisa ser ajustada para pegar o tamanho do token dos documentos antes de dividir
 
     # Executa passando metade dos documentos no contexto por vez
-    length_of_middle = len(list_docs_splited)//2
+    length_of_middle = len(list_docs_splited)//8 # Na grosseria eu dividi por 8 só para caber na janela de contexto
     risks = []
     with get_openai_callback() as cb:
         for i in range(0, len(list_docs_splited), length_of_middle):
             risks.append(llm_chain.run({'agency': agency,
-                            'context': list_docs_splited[i:i+length_of_middle]}))
+                                        'objectives': objectives,
+                                        'context': list_docs_splited[i:i+length_of_middle]}))
     st.write(cb)
 
     # ISSUE: Precisa gravar em json
