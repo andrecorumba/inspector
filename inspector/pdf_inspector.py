@@ -10,6 +10,7 @@ import json
 
 import openai
 
+import tiktoken
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -176,20 +177,79 @@ def risk_identifier(user, option, agency, objectives):
     # Conect to database
     list_docs_splited = sqlite_connection(folders.get_folder(user, option, 'vectordb'))
 
-    llm_chain = LLMChain(llm=llm, 
-                         prompt=RISK_IDENTIFIER_PROMPT)
+    # Initialize the LLMChain
+    llm_chain = LLMChain(llm=llm, prompt=RISK_IDENTIFIER_PROMPT)
     
-    # ISSUE: Essa parte precisa ser ajustada para pegar o tamanho do token dos documentos antes de dividir
+    # Count the number of tokens in the prepareted prompt
+    prepareted_prompt = llm_chain.prep_prompts([{'agency': agency,
+                                'objectives': objectives,
+                                'context': list_docs_splited}])
+    
+    num_tokens = count_prompt_tokens(prepareted_prompt)
 
+
+    # st.write(prepareted_prompt[0][0].text)
+
+    # ISSUE: PASSA TUDO PARA FAZER DAR PAU
+    # llm_chain.run({'agency': agency,
+    #                'objectives': objectives,
+    #                'context': list_docs_splited})
+
+    # ISSUE: Essa parte precisa ser ajustada para pegar o tamanho do token dos documentos antes de dividir
     # Executa passando metade dos documentos no contexto por vez
-    length_of_middle = len(list_docs_splited)//8 # Na grosseria eu dividi por 8 só para caber na janela de contexto
+    
+    lenght_of_list = len(list_docs_splited)
+    length_of_block = int(num_tokens // 8000) + 1  # 16000 is the maximum number of tokens per request from gpt-3.5-turbo-16k
+    length_of_middle = int(lenght_of_list // length_of_block) # Na grosseria eu dividi por 8 só para caber na janela de contexto
+
+
+
     risks = []
+    # length_of_middle = int(lenght_of_list // 8) # Na grosseria eu dividi por 8 só para caber na janela de contexto
+    # with get_openai_callback() as cb:
+    #     for i in range(0, len(list_docs_splited), length_of_middle):
+    #         risks.append(llm_chain.run({'agency': agency,
+    #                                     'objectives': objectives,
+    #                                     'context': list_docs_splited[i: i+length_of_middle]}))
+    #         st.write("Rodada: ", i)
+    #         st.write(cb)
+    
+
+    # ISSE: TENATNDO ARRUMAR A BAGUNÇA
+    # with get_openai_callback() as cb:
+
+    # List Comprehension to count the number of tokens in the pre prompt
+    list_len_tokens = [count_prompt_tokens(llm_chain.prep_prompts([{'agency': agency,
+                                                                    'objectives': objectives,
+                                                                    'context': list_docs_splited[i]
+                                                                    }])
+                                        ) for i in range(len(list_docs_splited))]
+    
+    list_with_index_to_prompt = find_sum_indices(list_len_tokens)
+
+
+    # ISSUE: Falta esta parte para executar
     with get_openai_callback() as cb:
-        for i in range(0, len(list_docs_splited), length_of_middle):
-            risks.append(llm_chain.run({'agency': agency,
-                                        'objectives': objectives,
-                                        'context': list_docs_splited[i:i+length_of_middle]}))
+        for i in list_with_index_to_prompt:
+            for j in range(len(i)):
+                llm_chain.run({'agency': agency,
+                                'objectives': objectives,
+                                'context': list_docs_splited[j]})
     st.write(cb)
+
+
+
+        # for i in range(lenght_of_list):
+        #         pre_prompt_i = llm_chain.prep_prompts([{'agency': agency,
+        #                         'objectives': objectives,
+        #                         'context': list_docs_splited[i]}])
+        #         num_tokens_i.append(count_prompt_tokens(pre_prompt_i))
+
+            
+
+
+
+         
 
     # ISSUE: Precisa gravar em json
     
@@ -249,3 +309,42 @@ def salvar_em_txt(dados, caminho_arquivo):
 
 def init_llm_openai(temperature, model):
     return OpenAI(temperature=temperature, model_name=model)
+
+def count_prompt_tokens(prepareted_prompt):
+    '''
+    Function that counts the number of tokens in the prompt.
+
+    Parameters:
+    prepareted_prompt (list): List of prepareted prompt.
+
+    Return: 
+    num_tokens (int): Number of tokens in the prompt.
+    '''    
+    
+    # length_of_caracters = len(prepareted_prompt[0][0].text)
+    encoding = tiktoken.encoding_for_model('gpt-3.5-turbo-16k')
+    num_tokens = len(encoding.encode(prepareted_prompt[0][0].text))
+
+    return num_tokens
+
+def find_sum_indices(input_list):
+    result = []
+    current_indices = []
+    current_sum = 0
+
+    for i in range(len(input_list)):
+        current_sum = current_sum + input_list[i]
+
+        if current_sum < 13000:
+            current_indices.append(i)
+        else:
+            if current_indices:
+                current_indices.append(i)
+                result.append(current_indices)
+                current_indices = []
+                current_sum = 0
+
+    if current_indices:
+        result.append(current_indices)
+
+    return result
