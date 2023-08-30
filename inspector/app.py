@@ -19,6 +19,7 @@ def main():
     if password.check_password():
         with st.sidebar:
             st.write("Usuário da sessão:", password.user)
+
             option = option_menu("Inspector v.0.1.0",
                                 options=["Página Inicial", 
                                         "Carregar Documentos", 
@@ -112,15 +113,27 @@ def main():
                     if objectives:=st.text_area("Objetivos da Auditoria:"):
                         with st.spinner("Processando Pergunta .... 💫"):                  
                             risks = pdf_inspector.risk_identifier(password.user, option_work, agency, objectives)
+                            
+                            # ISSUE: Apagar essa função pois nao ficou boa
+                            # risks = pdf_inspector.risk_identifier_as_retriever(password.user, option, agency, objectives)
+                            
                     
                         st.write(f"Riscos Identificados para a Unidade: {agency}")     
                         st.write(risks)
 
-                        #salvar_em_json(dict_resposta, os.path.join(pasta_database, 'qa.json'))
-                        # pdf_inspector.salvar_em_txt(dict_resposta, os.path.join(pasta_database, 'qa.txt'))
+                        database_folder = folders.get_folder(password.user, 
+                                                             option_work, 
+                                                             'database')
+                        
+                        # Save risks in a txt file
+                        with open(os.path.join(database_folder, 'risks.txt'), 'a', encoding='utf-8') as f:
+                            f.write(f"Riscos Identificados para a Unidade: {agency}\n")
+                            for response in risks:
+                                f.write(f"{response}\n")
+
             
-            except FileNotFoundError:
-                st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+            except Exception as e:
+                st.warning('Problemas ao carregar os arquivos. Por favor, carregue documentos.')
                 return
 
 

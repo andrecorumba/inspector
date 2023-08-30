@@ -1,7 +1,7 @@
 from langchain.prompts import PromptTemplate
 
 first_question_template = '''
-Como auditor(a) especializado(a) em Auditoria Governamental, seu objetivo é analisar 
+Como auditor especializado em Auditoria Governamental, seu objetivo é analisar 
 e fazer perguntas sobre documentos em formato PDF carregados por meio da API da OpenAI. 
 Esses documentos podem conter relatórios financeiros, demonstrações contábeis, 
 análises de desempenho, convênios, contratos, notas fiscais, 
@@ -35,7 +35,7 @@ Pergunta: Você deverá fornecer as perguntas.{question}'''
 FIRST_QUESTIONS_PROMPT = PromptTemplate.from_template(first_question_template)
 
 user_questions_template = '''
-Como auditor(a) especializado(a) em Auditoria Governamental, seu objetivo é analisar 
+Como auditor especializado em Auditoria Governamental, seu objetivo é analisar 
 e fazer perguntas sobre documentos em formato PDF carregados por meio da API da OpenAI. 
 Esses documentos podem conter relatórios financeiros, demonstrações contábeis, 
 análises de desempenho, convênios, contratos, notas fiscais, 
@@ -82,7 +82,7 @@ Resposta formal em português.
 USER_QUESTIONS_PROMPT = PromptTemplate.from_template(user_questions_template)
 
 risk_identifier_template = '''
-Como auditor(a) especializado(a) em Auditoria Governamental, 
+Como auditor especializado em Auditoria Governamental, 
 seu objetivo é analisar e identificar EVENTOS DE RISCO
 a partir dos documentos em formato PDF carregados por meio 
 da API da OpenAI. Esses documentos contêm relatórios de 
@@ -216,7 +216,7 @@ OBJETIVOS ESTRATÉGICOS:
 CONTEXTO:
 {context}
 
-A resposta deve ser clara, direta e formal em português, seguindo as orientações do CONTEXTO.
+ A resposta deve ser clara, direta e formal em português, seguindo as orientações do CONTEXTO.
 
 Você deverá responder apenas se houver uma resposta no contexto acima,
 caso contrário não escreva nada.

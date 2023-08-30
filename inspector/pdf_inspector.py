@@ -93,41 +93,38 @@ def pdf_analizer(usuario, option, query, llm, prompt):
     None
     """
     
+    # Load the API key
     _ = load_dotenv(find_dotenv())
     openai.api_key = os.environ['OPENAI_API_KEY']
 
-    lista_respostas = []
 
     try:
-        pasta_do_trabalho = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', usuario, option)
-        pasta_vectordb = os.path.join(pasta_do_trabalho, 'vectordb')
-        pasta_arquivos = os.path.join(pasta_do_trabalho, 'files')
-        pasta_database = os.path.join(pasta_do_trabalho, "database")
-
-
-        # RetrievalQA
-        # llm = processing_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
-        # llm = OpenAI(temperature=0.0, model_name="gpt-3.5-turbo-16k" )
-        #QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
-
-        # Construtor do embedding
+        work_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', usuario, option)
+        vectordb_folder = os.path.join(work_folder, 'vectordb')
+        files_folder = os.path.join(work_folder, 'files')
+        database_folder = os.path.join(work_folder, "database")
+    except FileNotFoundError:
+        st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+        return
+    
+    try:
+        # Embedding constructor
         openai_embeddings = OpenAIEmbeddings(openai_api_key=openai.api_key,
                                             chunk_size=CHUNK_SIZE,
                                             max_retries=3)
         
-        # Construtor do VectorDB a partir do banco persistente
+        # VectorDB constructor from the persistent database
         vector_db = Chroma(collection_name="langchain_store",
-                           persist_directory=pasta_vectordb, 
+                           persist_directory=vectordb_folder, 
                            embedding_function=openai_embeddings)
         
-        # Q&A a partir do RetrievalQA
+        # Q&A from RetrievalQA
         qa_chain = RetrievalQA.from_chain_type(
             llm=llm,
             retriever=vector_db.as_retriever(),
             return_source_documents=True,
             chain_type_kwargs={"prompt": prompt})
-        
-        # Processa a pregunta no modelo e retorna a resposta
+
         with st.spinner("Processando Pergunta .... 💫"):
             resposta = qa_chain({'query': query})
             
@@ -141,11 +138,11 @@ def pdf_analizer(usuario, option, query, llm, prompt):
             dict_resposta = {'query': query, 
                              'result': resposta['result']}
                        
-            salvar_em_json(dict_resposta, os.path.join(pasta_database, 'qa.json'))
-            salvar_em_txt(dict_resposta, os.path.join(pasta_database, 'qa.txt'))
+            save_in_json(dict_resposta, os.path.join(database_folder, 'qa.json'))
+            save_in_txt(dict_resposta, os.path.join(database_folder, 'qa.txt'))
     
     except Exception as e:
-        st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+        st.warning('Erro ao processar LLM.')
         return
     
 def generate_first_questions(usuario, option):
@@ -156,6 +153,11 @@ def generate_first_questions(usuario, option):
 def user_questions(usuario, option, query):
     llm = init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, USER_QUESTIONS_PROMPT)
+
+# def risk_identifier_as_retriever(user, option, agency, objectives):
+#     llm = init_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
+    # risk_identifier_version_2(user, option, ' ', agency, objectives, llm, RISK_IDENTIFIER_PROMPT)
+
 
 def risk_identifier(user, option, agency, objectives):
     '''
@@ -174,49 +176,20 @@ def risk_identifier(user, option, agency, objectives):
     # Initilize the model
     llm = init_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
     
-    # Conect to database
+    # Conect to database and get the documents from sqlite3
     list_docs_splited = sqlite_connection(folders.get_folder(user, option, 'vectordb'))
 
     # Initialize the LLMChain
     llm_chain = LLMChain(llm=llm, prompt=RISK_IDENTIFIER_PROMPT)
     
-    # Count the number of tokens in the prepareted prompt
-    prepareted_prompt = llm_chain.prep_prompts([{'agency': agency,
-                                'objectives': objectives,
-                                'context': list_docs_splited}])
-    
-    num_tokens = count_prompt_tokens(prepareted_prompt)
+    prepareted_prompt_2 = llm_chain.prep_prompts([{'agency': agency,
+                            'objectives': objectives,
+                            'context': list_docs_splited}])
 
-
-    # st.write(prepareted_prompt[0][0].text)
-
-    # ISSUE: PASSA TUDO PARA FAZER DAR PAU
-    # llm_chain.run({'agency': agency,
-    #                'objectives': objectives,
-    #                'context': list_docs_splited})
-
-    # ISSUE: Essa parte precisa ser ajustada para pegar o tamanho do token dos documentos antes de dividir
-    # Executa passando metade dos documentos no contexto por vez
-    
-    lenght_of_list = len(list_docs_splited)
-    length_of_block = int(num_tokens // 8000) + 1  # 16000 is the maximum number of tokens per request from gpt-3.5-turbo-16k
-    length_of_middle = int(lenght_of_list // length_of_block) # Na grosseria eu dividi por 8 só para caber na janela de contexto
-
-
+    # num_tokens = count_prompt_tokens(prepareted_prompt)
+    num_tokens = count_prompt_tokens(prepareted_prompt_2)
 
     risks = []
-    # length_of_middle = int(lenght_of_list // 8) # Na grosseria eu dividi por 8 só para caber na janela de contexto
-    # with get_openai_callback() as cb:
-    #     for i in range(0, len(list_docs_splited), length_of_middle):
-    #         risks.append(llm_chain.run({'agency': agency,
-    #                                     'objectives': objectives,
-    #                                     'context': list_docs_splited[i: i+length_of_middle]}))
-    #         st.write("Rodada: ", i)
-    #         st.write(cb)
-    
-
-    # ISSE: TENATNDO ARRUMAR A BAGUNÇA
-    # with get_openai_callback() as cb:
 
     # List Comprehension to count the number of tokens in the pre prompt
     list_len_tokens = [count_prompt_tokens(llm_chain.prep_prompts([{'agency': agency,
@@ -228,30 +201,24 @@ def risk_identifier(user, option, agency, objectives):
     list_with_index_to_prompt = find_sum_indices(list_len_tokens)
 
 
-    # ISSUE: Falta esta parte para executar
+    # ISSUE: Tranformar em função
     with get_openai_callback() as cb:
-        for i in list_with_index_to_prompt:
-            for j in range(len(i)):
-                llm_chain.run({'agency': agency,
-                                'objectives': objectives,
-                                'context': list_docs_splited[j]})
+        for list_index in list_with_index_to_prompt:
+            sum_of_content = ''
+            total_count_index = 0
+            for index in list_index:
+                sum_of_content += list_docs_splited[index]
+                
+                # essas duas variáveis serão apagadas
+                count_index = len(list_docs_splited[index])
+                total_count_index += count_index
+
+            # Pass the string with sum of content to the model
+            risks.append(llm_chain.run({'agency': agency,
+                            'objectives': objectives,
+                            'context': sum_of_content})
+                            )
     st.write(cb)
-
-
-
-        # for i in range(lenght_of_list):
-        #         pre_prompt_i = llm_chain.prep_prompts([{'agency': agency,
-        #                         'objectives': objectives,
-        #                         'context': list_docs_splited[i]}])
-        #         num_tokens_i.append(count_prompt_tokens(pre_prompt_i))
-
-            
-
-
-
-         
-
-    # ISSUE: Precisa gravar em json
     
     return risks
     
@@ -276,7 +243,7 @@ def sqlite_connection(vectordb_folder):
     # Imprimindo a lista de resultados
     return list_docs_splited
 
-def salvar_em_json(dados, caminho_arquivo):
+def save_in_json(data: dict, file_path: str):
     ''' 
     Função que salva os dados em um arquivo JSON.
 
@@ -286,15 +253,15 @@ def salvar_em_json(dados, caminho_arquivo):
     '''
 
     lista_respostas = []
-    if os.path.exists(caminho_arquivo):
-        with open(caminho_arquivo, "r", encoding="utf-8") as f:
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
             lista_respostas = json.load(f)
-    lista_respostas.append(dados)
+    lista_respostas.append(data)
     
-    with open(caminho_arquivo, "w", encoding="utf-8") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         json.dump(lista_respostas, f, ensure_ascii=False, indent=4)
 
-def salvar_em_txt(dados, caminho_arquivo):
+def save_in_txt(data: dict, file_path: str):
     ''' 
     Função que salva os dados em um arquivo txt.
 
@@ -303,9 +270,9 @@ def salvar_em_txt(dados, caminho_arquivo):
     caminho_arquivo (str): Caminho do arquivo txt.
     '''
     
-    with open(caminho_arquivo, 'a', encoding='utf-8') as f:
-        f.write(f"Pergunta: {dados['query']}\n\n")
-        f.write(f"Resposta: {dados['result']}\n\n")
+    with open(file_path, 'a', encoding='utf-8') as f:
+        f.write(f"Pergunta: {data['query']}\n\n")
+        f.write(f"Resposta: {data['result']}\n\n")
 
 def init_llm_openai(temperature, model):
     return OpenAI(temperature=temperature, model_name=model)
@@ -335,7 +302,7 @@ def find_sum_indices(input_list):
     for i in range(len(input_list)):
         current_sum = current_sum + input_list[i]
 
-        if current_sum < 13000:
+        if current_sum < 16000:
             current_indices.append(i)
         else:
             if current_indices:
@@ -348,3 +315,68 @@ def find_sum_indices(input_list):
         result.append(current_indices)
 
     return result
+
+
+def risk_identifier_version_2(usuario, option, query, agency, objectives, llm, prompt):
+    """
+    Função que analisa arquivos PDF.
+
+    Parâmetros:
+    usuario (str): Nome do usuário.
+    option (str): Opção de análise.
+    query (str): Consulta.
+    template (str): Template de consulta.
+
+    Retorno:
+    None
+    """
+    
+    # Load the API key
+    _ = load_dotenv(find_dotenv())
+    openai.api_key = os.environ['OPENAI_API_KEY']
+
+
+    try:
+        work_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', usuario, option)
+        vectordb_folder = os.path.join(work_folder, 'vectordb')
+        files_folder = os.path.join(work_folder, 'files')
+        database_folder = os.path.join(work_folder, "database")
+    except FileNotFoundError:
+        st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+        return
+    
+    try:
+        # Embedding constructor
+        openai_embeddings = OpenAIEmbeddings(openai_api_key=openai.api_key,
+                                            chunk_size=CHUNK_SIZE,
+                                            max_retries=3)
+        
+        # VectorDB constructor from the persistent database
+        vector_db = Chroma(collection_name="langchain_store",
+                           persist_directory=vectordb_folder, 
+                           embedding_function=openai_embeddings)
+        
+        # Q&A from RetrievalQA
+        qa_chain = RetrievalQA.from_chain_type(
+            llm=llm,
+            retriever=vector_db.as_retriever(),
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": prompt})
+
+        with st.spinner("Processando Pergunta .... 💫"):
+            resposta = qa_chain({'query': 'Identifique Riscos no Relatório'})
+            
+            
+            st.write(f"Identificação de Riscos")     
+            st.write(resposta['result'])
+            st.json(resposta['source_documents'], expanded=False)
+
+            # dict_resposta = {'query': query, 
+            #                  'result': resposta['result']}
+                       
+            # # save_in_json(dict_resposta, os.path.join(database_folder, 'qa.json'))
+            # save_in_txt(dict_resposta, os.path.join(database_folder, 'qa.txt'))
+    
+    except Exception as e:
+        st.warning('Erro ao processar LLM.')
+        return
