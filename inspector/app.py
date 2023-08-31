@@ -18,6 +18,7 @@ def main():
     """ Main function for the Inspector App. """
 
     if password.check_password():
+
         with st.sidebar:
             st.write("Usuário da sessão:", password.user)
 
@@ -108,16 +109,33 @@ def main():
                     st.session_state['work_folder'] = folders.get_folder(user=password.user,
                                                                               work_key=option_work,
                                                                               type_of_folder='work_folder')
+                    st.radio('Tipo de Análise', options=['Refine Mode',
+                                                   'Recursive Mode'], 
+                                                   key='radio_risk_mode')
+                    st.button('Identificar Riscos', key='button_risk_mode')
 
-                # Risk Identifier                 
-                if agency:=st.text_input("Digite o nome ou a sigla da unidade auditada:"): 
-                    if objectives:=st.text_area("Objetivos da Auditoria:"):
-                        with st.spinner("Processando Pergunta .... 💫"):                  
-                            # risks = pdf_inspector.risk_identifier(password.user, option_work, agency, objectives)
-                            response_risk = risks.risks_identifier(password.user, option_work)
-                           
-                        st.write(f"Riscos Identificados para a Unidade: {agency}")     
-                        st.write(f"{response_risk}")
+                # Risk Identifier      
+                if st.session_state['button_risk_mode']:           
+                    if st.session_state['radio_risk_mode'] == 'Refine Mode':
+                        database_folder = folders.get_folder(password.user, option_work, 'database') 
+                        with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
+                            # Risk Identifier from refined template
+                            response_risk_refined_mode = risks.risks_identifier(password.user, option_work)
+                            with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
+                                f.write(response_risk_refined_mode)
+                            st.success("Riscos no modo Refine identificados com sucesso! 🎉")
+                    
+                    elif st.session_state['radio_risk_mode'] == 'Recursive Mode':
+                        with st.spinner("Identificando Riscos modo RECURSIVE .... 💫"):
+                            # Risk Identifier from recursive sqlite
+                            response_risk_recursive_mode = pdf_inspector.risk_identifier(password.user, option_work)
+                            with open(os.path.join(database_folder, 'risks_type_recursive_sqlite.txt'), 'w') as f:
+                                f.write(response_risk_recursive_mode)
+                            st.success("Riscos no modo recursive identificados com sucesso! 🎉")
+
+ 
+                        # st.write(f"Riscos Identificados para a Unidade: {agency}")     
+                        # st.write(f"{response_risk}")
             
             except Exception as e:
                 st.warning('Problemas ao carregar os arquivos. Por favor, carregue documentos.')
@@ -208,7 +226,6 @@ def get_questions(user, work_key):
         questions = qa[0]['result'].split('\n')
 
     return questions
-
 
 if __name__ == '__main__':
     main()

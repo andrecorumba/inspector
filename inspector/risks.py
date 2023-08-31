@@ -35,7 +35,7 @@ import folders
 CHUNK_SIZE_RISK = 10000
 CHUNK_OVERLAP_RISK = 200
 
-def risks_identifier(user, option):
+def risks_identifier(user, option_work):
     """
     Função que analisa arquivos PDF.
 
@@ -57,8 +57,8 @@ def risks_identifier(user, option):
     # Get folders to work
     try:
        
-        work_folder = folders.get_folder(user, option, 'work_folder')  
-        files_folder = folders.get_folder(user, option, 'files')  
+        work_folder = folders.get_folder(user, option_work, 'work_folder')  
+        files_folder = folders.get_folder(user, option_work, 'files')  
     except FileNotFoundError:
         st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
         return
@@ -107,3 +107,4 @@ def split_text_risk(text, chunk_size, chunk_overlap):
     documents = [Document(page_content=t) for t in text_chunks]
 
     return documents
+    

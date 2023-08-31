@@ -159,7 +159,7 @@ def user_questions(usuario, option, query):
     # risk_identifier_version_2(user, option, ' ', agency, objectives, llm, RISK_IDENTIFIER_PROMPT)
 
 
-def risk_identifier(user, option, agency, objectives):
+def risk_identifier(user, option):
     '''
     Funcion that identifies risks in the agency.
     The model, gpt-3.5-turbo-16k, can receive a maximum of 16384 tokens per request.
@@ -182,9 +182,7 @@ def risk_identifier(user, option, agency, objectives):
     # Initialize the LLMChain
     llm_chain = LLMChain(llm=llm, prompt=RISK_IDENTIFIER_PROMPT)
     
-    prepareted_prompt_2 = llm_chain.prep_prompts([{'agency': agency,
-                            'objectives': objectives,
-                            'context': list_docs_splited}])
+    prepareted_prompt_2 = llm_chain.prep_prompts([{'text': list_docs_splited}])
 
     # num_tokens = count_prompt_tokens(prepareted_prompt)
     num_tokens = count_prompt_tokens(prepareted_prompt_2)
@@ -192,11 +190,8 @@ def risk_identifier(user, option, agency, objectives):
     risks = []
 
     # List Comprehension to count the number of tokens in the pre prompt
-    list_len_tokens = [count_prompt_tokens(llm_chain.prep_prompts([{'agency': agency,
-                                                                    'objectives': objectives,
-                                                                    'context': list_docs_splited[i]
-                                                                    }])
-                                        ) for i in range(len(list_docs_splited))]
+    list_len_tokens = [count_prompt_tokens(llm_chain.prep_prompts([{'text': list_docs_splited[i]}])) 
+                       for i in range(len(list_docs_splited))]
     
     list_with_index_to_prompt = find_sum_indices(list_len_tokens)
 
@@ -214,10 +209,7 @@ def risk_identifier(user, option, agency, objectives):
                 total_count_index += count_index
 
             # Pass the string with sum of content to the model
-            risks.append(llm_chain.run({'agency': agency,
-                            'objectives': objectives,
-                            'context': sum_of_content})
-                            )
+            risks.append(llm_chain.run({'text': sum_of_content}))
     st.write(cb)
     
     return risks
