@@ -11,6 +11,7 @@ import password
 import chave
 import folders
 import pdf_inspector
+import risks
 
 
 def main():
@@ -112,25 +113,11 @@ def main():
                 if agency:=st.text_input("Digite o nome ou a sigla da unidade auditada:"): 
                     if objectives:=st.text_area("Objetivos da Auditoria:"):
                         with st.spinner("Processando Pergunta .... 💫"):                  
-                            risks = pdf_inspector.risk_identifier(password.user, option_work, agency, objectives)
-                            
-                            # ISSUE: Apagar essa função pois nao ficou boa
-                            # risks = pdf_inspector.risk_identifier_as_retriever(password.user, option, agency, objectives)
-                            
-                    
+                            # risks = pdf_inspector.risk_identifier(password.user, option_work, agency, objectives)
+                            response_risk = risks.risks_identifier(password.user, option_work)
+                           
                         st.write(f"Riscos Identificados para a Unidade: {agency}")     
-                        st.write(risks)
-
-                        database_folder = folders.get_folder(password.user, 
-                                                             option_work, 
-                                                             'database')
-                        
-                        # Save risks in a txt file
-                        with open(os.path.join(database_folder, 'risks.txt'), 'a', encoding='utf-8') as f:
-                            f.write(f"Riscos Identificados para a Unidade: {agency}\n")
-                            for response in risks:
-                                f.write(f"{response}\n")
-
+                        st.write(f"{response_risk}")
             
             except Exception as e:
                 st.warning('Problemas ao carregar os arquivos. Por favor, carregue documentos.')
