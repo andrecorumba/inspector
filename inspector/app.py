@@ -118,9 +118,9 @@ def main():
                 if st.session_state['button_risk_mode']:           
                     database_folder = folders.get_folder(password.user, option_work, 'database') 
                     with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
-                        response_risk_refined_mode, cb = risks.risks_identifier(password.user, option_work)      
+                        response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, option_work)      
                     with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
-                        f.write(response_risk_refined_mode)
+                        f.write(f"RELATÓRIO DE IDENTIFICAÇÃO DE RISCOS\n\n{files_loaded}\n\n{cb}\n\n{response_risk_refined_mode}\n\n")
                     st.success("Riscos identificados com sucesso! 🎉")
                     st.write(cb)
                     st.write(response_risk_refined_mode)

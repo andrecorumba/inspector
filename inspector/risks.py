@@ -4,27 +4,15 @@ from streamlit_option_menu import option_menu
 
 import os
 
-import sqlite3
-
-import json
-
 import openai
-
-import tiktoken
 
 from dotenv import load_dotenv, find_dotenv
 
 from langchain.chains.summarize import load_summarize_chain
 from langchain.document_loaders.pdf import PyPDFDirectoryLoader
-from langchain.text_splitter import CharacterTextSplitter
 from langchain.text_splitter import TokenTextSplitter
 from langchain.docstore.document import Document
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores.chroma import Chroma
-from langchain.prompts import PromptTemplate
-from langchain.llms import OpenAI
-from langchain.chains import RetrievalQA
-from langchain.chains.llm import LLMChain
+
 from langchain.callbacks import get_openai_callback
 
 # Import Local Modules
@@ -32,7 +20,7 @@ from prompts import RISK_IDENTIFIER_PROMPT, REFINE_PROMPT_RISKS
 import pdf_inspector
 import folders
 
-CHUNK_SIZE_RISK = 5000
+CHUNK_SIZE_RISK = 10000
 CHUNK_OVERLAP_RISK = 200
 
 def risks_identifier(user, option_work):
@@ -65,6 +53,8 @@ def risks_identifier(user, option_work):
         loader = PyPDFDirectoryLoader(files_folder)
         documents = loader.load()
 
+        files_loaded = documents[0].metadata['source']
+
         # SPLIT - Split the documents into chunks
         documents_for_risk_gen = split_text_risk(str(documents), 
                    chunk_size=CHUNK_SIZE_RISK, 
@@ -82,7 +72,7 @@ def risks_identifier(user, option_work):
         with get_openai_callback() as cb:
             response_risk = risks_chain.run(documents_for_risk_gen)
         
-        return response_risk, cb
+        return response_risk, cb, files_loaded
     
     except Exception as e:
         st.error('Erro ao processar LLM.', e)

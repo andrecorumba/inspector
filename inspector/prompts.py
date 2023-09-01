@@ -85,30 +85,32 @@ risk_identifier_template = '''
 Você é um auditor especializado em auditoria governamental, seu objetivo é identificar eventos de risco a partir de relatórios de auditoria realizados pela Controladoria-Geral da União (CGU).
 
 A partir de documentos presentes no contexto você deve identificar eventos de risco, bem com as respectivas causas, consequências e classificação desses riscos quanto à categoria e natureza.
+Não coloque números de processos licitatório ou contratos no texto, mas apenas de forma geral.
+
+Definições:
+evento_de_risco: descreve os eventos de riscos identificados.
+causa: descreve as possíveis causas, condições que dão origem à possibilidade.
+consequencia: descreve os possíveis efeitos ou consequências do evento de risco.
+classificacao: classificação quanto à categoria e natureza. 
 
 Resposta:
-A resposta deve ser clara, direta e formal em português, sobre o texto presente no contexto.
-O formato da resposta deverá conter os campos:
-EVENTO DE RISCO: descreve os eventos de riscos identificados.
-CAUSAS: descreve as possíveis causas, condições que dão origem à possibilidade.
-CONSEQUÊNCIAS: descreve os possíveis efeitos ou consequências do evento de risco.
-CLASSIFICAÇÃO: classificação quanto à categoria e natureza. 
+A resposta deve ser clara, direta, formal, em português, e no formato separado por ponto-e-vírgula como exemplo a seguir.
 
 Exemplos de Resposta: 
-EVENTO DE RISCO 1: Abandono nas obras pelas de engenharia empresas construtoras.
-CAUSAS: Falta de fiscalização.
-CONSEQUÊNCIAS: Atraso na entrega das obras.
-CLASSIFICAÇÃO: Operacional, não orçamentário-financeira.
-
-EVENTO DE RISCO 2: Antecipação nos pagamentos às empresas construtoras em relação à  efetiva execução das obras.
-CAUSAS: Falta de fiscalização.
-CONSEQUÊNCIAS: Aumento do risco de desvios de recursos.
-CLASSIFICAÇÃO: Operacional, não orçamentário-financeira.
-
-EVENTO DE RISCO 3: Direcionamento a fornecedores na aplicação dos recursos públicos.
-CAUSAS: Fragilidades no processo de seleção de fornecedores.
-CONSEQUÊNCIAS: Aumento do risco de desvios de recursos.
-CLASSIFICAÇÃO: Operacional, não orçamentário-financeira.
+evento_de_risco: Abandono nas obras pelas de engenharia empresas construtoras.
+causa: Falta de fiscalização.
+consequencia: Atraso na entrega das obras.
+classificacao: Operacional, não orçamentário-financeira.
+  
+evento_de_risco: Antecipação nos pagamentos às empresas construtoras em relação à  efetiva execução das obras.
+causa: Falta de fiscalização.
+consequencia: Aumento do risco de desvios de recursos.
+classificacao: Operacional, não orçamentário-financeira.
+  
+evento_de_risco: Direcionamento a fornecedores na aplicação dos recursos públicos.
+causa: Fragilidades no processo de seleção de fornecedores.
+consequencia: Aumento do risco de desvios de recursos.
+classificacao: Operacional, não orçamentário-financeira.
 
 Contexto:
 {text}
@@ -122,13 +124,7 @@ RISK_IDENTIFIER_PROMPT = PromptTemplate(input_variables=['text'],
 
 refine_template_risk = ("""
 Você é um auditor especializado em rever e refinar a identificação de riscos. Seu objetivo é refinar eventos de risco identificados a partir de relatórios de auditoria da Controladoria-Geral da União (CGU).
-Refine eventos de riscos escrevendo-os de forma mais genérica, sem citar números de processos licitatório ou contratos e sem citar nomes de municípios ou unidades da federação, tampouco empresas.
-                                                
-Exemplo de Resposta: 
-EVENTO DE RISCO 1: Abandono nas obras pelas de engenharia empresas construtoras.
-CAUSAS: Falta de fiscalização.
-CONSEQUÊNCIAS: Atraso na entrega das obras.
-CLASSIFICAÇÃO: Operacional, não orçamentário-financeira.
+Refine o texto dos eventos de riscos escrevendo-os de forma mais genérica, sem citar números de processos licitatório ou contratos e sem citar nomes de municípios ou unidades da federação, tampouco empresas.
                                                                
 Você já recebeu alguns riscos identificados anteriormente: {existing_answer}.
 Você tem a opção de refinar os riscos existentes ou adicionar novos (se necessário) com mais contexto abaixo.
@@ -136,8 +132,14 @@ Você tem a opção de refinar os riscos existentes ou adicionar novos (se neces
 Contexto:
 {text}
 
-Dado o novo contexto, refine os riscos originais ou adicione novos (se necessário) em português.
-Se o contexto não for útil, mantenha apenas os riscos originais.
+Dado o novo contexto, refine o texto dos riscos originais ou adicione novos (se necessário) em português.
+Se o contexto não for útil, mantenha apenas os riscos originais. Numere os eventos de risco de forma sequencial.
+
+Exemplos de Resposta: 
+evento_de_risco: Abandono nas obras pelas de engenharia empresas construtoras.
+causa: Falta de fiscalização.
+consequencia: Atraso na entrega das obras.
+classificacao: Operacional, não orçamentário-financeira.
 """
 )
 REFINE_PROMPT_RISKS = PromptTemplate(
