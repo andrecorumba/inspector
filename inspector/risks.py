@@ -32,21 +32,19 @@ from prompts import RISK_IDENTIFIER_PROMPT, REFINE_PROMPT_RISKS
 import pdf_inspector
 import folders
 
-CHUNK_SIZE_RISK = 10000
+CHUNK_SIZE_RISK = 5000
 CHUNK_OVERLAP_RISK = 200
 
 def risks_identifier(user, option_work):
     """
-    Função que analisa arquivos PDF.
+    Function to identify risks in documents.
 
-    Parâmetros:
-    usuario (str): Nome do usuário.
-    option (str): Opção de análise.
-    query (str): Consulta.
-    template (str): Template de consulta.
+    Parameters:
+    user (str): User name.
+    option_work (str): Work key.
 
-    Retorno:
-    None
+    Return:
+    response_risk (str): Response from LLM.
     """
     
     # Load the API key
@@ -56,27 +54,24 @@ def risks_identifier(user, option_work):
 
     # Get folders to work
     try:
-       
         work_folder = folders.get_folder(user, option_work, 'work_folder')  
         files_folder = folders.get_folder(user, option_work, 'files')  
     except FileNotFoundError:
-        st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
+        st.error('Erro ao carregar as pastas de trabalho.')
         return
     
-    
     try:
-
-        # LOAD -  Carrega os arquivos pdf
+        # LOAD -  Load the pdf documents
         loader = PyPDFDirectoryLoader(files_folder)
         documents = loader.load()
 
-        # SPLIT - Divide os documentos em pedaços menores
+        # SPLIT - Split the documents into chunks
         documents_for_risk_gen = split_text_risk(str(documents), 
                    chunk_size=CHUNK_SIZE_RISK, 
                    chunk_overlap=CHUNK_OVERLAP_RISK)
 
         # Initialize the LLM
-        llm = pdf_inspector.init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
+        llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
 
 
         # Generate risk analysis
@@ -84,13 +79,13 @@ def risks_identifier(user, option_work):
                                            chain_type="refine", 
                                            question_prompt=RISK_IDENTIFIER_PROMPT, 
                                            refine_prompt=REFINE_PROMPT_RISKS)
-
-        response_risk = risks_chain.run(documents_for_risk_gen)
+        with get_openai_callback() as cb:
+            response_risk = risks_chain.run(documents_for_risk_gen)
         
-        return response_risk
+        return response_risk, cb
     
     except Exception as e:
-        st.warning('Erro ao processar LLM.', e)
+        st.error('Erro ao processar LLM.', e)
         return
     
 # Function to split text into chunks
@@ -107,4 +102,3 @@ def split_text_risk(text, chunk_size, chunk_overlap):
     documents = [Document(page_content=t) for t in text_chunks]
 
     return documents
-    

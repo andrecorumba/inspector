@@ -28,6 +28,7 @@ from langchain.callbacks import get_openai_callback
 import chave
 import folders
 from prompts import FIRST_QUESTIONS_PROMPT, USER_QUESTIONS_PROMPT, RISK_IDENTIFIER_PROMPT
+import risks
 
 CHUNK_SIZE = 500
 
@@ -159,81 +160,97 @@ def user_questions(usuario, option, query):
     # risk_identifier_version_2(user, option, ' ', agency, objectives, llm, RISK_IDENTIFIER_PROMPT)
 
 
-def risk_identifier(user, option):
-    '''
-    Funcion that identifies risks in the agency.
-    The model, gpt-3.5-turbo-16k, can receive a maximum of 16384 tokens per request.
+# def risk_identifier(user, option_work):
+#     '''
+#     Funcion that identifies risks in the agency.
+#     The model, gpt-3.5-turbo-16k, can receive a maximum of 16384 tokens per request.
 
-    Parameters:
-    user (str): User name.
-    option (str): Option of analysis.
-    agency (str): Agency name.
+#     Parameters:
+#     user (str): User name.
+#     option (str): Option of analysis.
+#     agency (str): Agency name.
 
-    Return:
-    risks (list): List of risks.
-    '''
+#     Return:
+#     risks (list): List of risks.
+#     '''
+#     # Get folders to work
+#     try:
+#         work_folder = folders.get_folder(user, option_work, 'work_folder')  
+#         files_folder = folders.get_folder(user, option_work, 'files')  
+#     except FileNotFoundError:
+#         st.error('Erro ao carregar as pastas de trabalho.')
+#         return
+
+#         # LOAD -  Load the pdf documents
+#     loader = PyPDFDirectoryLoader(files_folder)
+#     documents = loader.load()
+
+#     # SPLIT - Split the documents into chunks
+#     documents_for_risk_recursive = risks.split_text_risk(str(documents), 
+#                 chunk_size=CHUNK_SIZE, 
+#                 chunk_overlap=200)
     
-    # Initilize the model
-    llm = init_llm_openai(temperature=0.6, model="gpt-3.5-turbo-16k")
+#     # Initilize the model
+#     llm = init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
     
-    # Conect to database and get the documents from sqlite3
-    list_docs_splited = sqlite_connection(folders.get_folder(user, option, 'vectordb'))
+#     # Conect to database and get the documents from sqlite3
+#     list_docs_splited = sqlite_connection(folders.get_folder(user, option_work, 'vectordb'))
 
-    # Initialize the LLMChain
-    llm_chain = LLMChain(llm=llm, prompt=RISK_IDENTIFIER_PROMPT)
+#     # Initialize the LLMChain
+#     llm_chain = LLMChain(llm=llm, prompt=RISK_IDENTIFIER_PROMPT)
     
-    prepareted_prompt_2 = llm_chain.prep_prompts([{'text': list_docs_splited}])
+#     prepareted_prompt_2 = llm_chain.prep_prompts([{'text': list_docs_splited}])
 
-    # num_tokens = count_prompt_tokens(prepareted_prompt)
-    num_tokens = count_prompt_tokens(prepareted_prompt_2)
+#     # num_tokens = count_prompt_tokens(prepareted_prompt)
+#     num_tokens = count_prompt_tokens(prepareted_prompt_2)
 
-    risks = []
+#     risks = []
 
-    # List Comprehension to count the number of tokens in the pre prompt
-    list_len_tokens = [count_prompt_tokens(llm_chain.prep_prompts([{'text': list_docs_splited[i]}])) 
-                       for i in range(len(list_docs_splited))]
+#     # List Comprehension to count the number of tokens in the pre prompt
+#     list_len_tokens = [count_prompt_tokens(llm_chain.prep_prompts([{'text': list_docs_splited[i]}])) 
+#                        for i in range(len(list_docs_splited))]
     
-    list_with_index_to_prompt = find_sum_indices(list_len_tokens)
+#     list_with_index_to_prompt = find_sum_indices(list_len_tokens)
 
 
-    # ISSUE: Tranformar em função
-    with get_openai_callback() as cb:
-        for list_index in list_with_index_to_prompt:
-            sum_of_content = ''
-            total_count_index = 0
-            for index in list_index:
-                sum_of_content += list_docs_splited[index]
+#     # ISSUE: Tranformar em função
+#     with get_openai_callback() as cb:
+#         for list_index in list_with_index_to_prompt:
+#             sum_of_content = ''
+#             total_count_index = 0
+#             for index in list_index:
+#                 sum_of_content += list_docs_splited[index]
                 
-                # essas duas variáveis serão apagadas
-                count_index = len(list_docs_splited[index])
-                total_count_index += count_index
+#                 # essas duas variáveis serão apagadas
+#                 count_index = len(list_docs_splited[index])
+#                 total_count_index += count_index
 
-            # Pass the string with sum of content to the model
-            risks.append(llm_chain.run({'text': sum_of_content}))
-    st.write(cb)
+#             # Pass the string with sum of content to the model
+#             risks.append(llm_chain.run({'text': sum_of_content}))
+#     st.write(cb)
     
-    return risks
+#     return risks
     
 
-def sqlite_connection(vectordb_folder):
-    # Conectando ao banco de dados
-    conn = sqlite3.connect(os.path.join(vectordb_folder, 'chroma.sqlite3'))  # Substitua pelo nome do seu banco de dados
-    cursor = conn.cursor()
+# def sqlite_connection(vectordb_folder):
+    # # Conectando ao banco de dados
+    # conn = sqlite3.connect(os.path.join(vectordb_folder, 'chroma.sqlite3'))  # Substitua pelo nome do seu banco de dados
+    # cursor = conn.cursor()
 
-    # Definindo a query
-    query = "SELECT c1 FROM embedding_fulltext_content"
+    # # Definindo a query
+    # query = "SELECT c1 FROM embedding_fulltext_content"
 
-    # Executando a query
-    cursor.execute(query)
+    # # Executando a query
+    # cursor.execute(query)
 
-    # Obtendo os resultados em forma de lista
-    list_docs_splited = [row[0] for row in cursor.fetchall()]
+    # # Obtendo os resultados em forma de lista
+    # list_docs_splited = [row[0] for row in cursor.fetchall()]
 
-    # Fechando a conexão com o banco de dados
-    conn.close()
+    # # Fechando a conexão com o banco de dados
+    # conn.close()
 
-    # Imprimindo a lista de resultados
-    return list_docs_splited
+    # # Imprimindo a lista de resultados
+    # return list_docs_splited
 
 def save_in_json(data: dict, file_path: str):
     ''' 
@@ -286,24 +303,24 @@ def count_prompt_tokens(prepareted_prompt):
 
     return num_tokens
 
-def find_sum_indices(input_list):
-    result = []
-    current_indices = []
-    current_sum = 0
+# def find_sum_indices(input_list):
+#     result = []
+#     current_indices = []
+#     current_sum = 0
 
-    for i in range(len(input_list)):
-        current_sum = current_sum + input_list[i]
+#     for i in range(len(input_list)):
+#         current_sum = current_sum + input_list[i]
 
-        if current_sum < 16000:
-            current_indices.append(i)
-        else:
-            if current_indices:
-                current_indices.append(i)
-                result.append(current_indices)
-                current_indices = []
-                current_sum = 0
+#         if current_sum < 16000:
+#             current_indices.append(i)
+#         else:
+#             if current_indices:
+#                 current_indices.append(i)
+#                 result.append(current_indices)
+#                 current_indices = []
+#                 current_sum = 0
 
-    if current_indices:
-        result.append(current_indices)
+#     if current_indices:
+#         result.append(current_indices)
 
-    return result
+#     return result

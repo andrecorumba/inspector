@@ -109,29 +109,29 @@ def main():
                     st.session_state['work_folder'] = folders.get_folder(user=password.user,
                                                                               work_key=option_work,
                                                                               type_of_folder='work_folder')
-                    st.radio('Tipo de Análise', options=['Refine Mode',
-                                                   'Recursive Mode'], 
-                                                   key='radio_risk_mode')
+                    # st.radio('Tipo de Análise', options=['Refine Mode',
+                    #                                'Recursive Mode'], 
+                    #                                key='radio_risk_mode')
                     st.button('Identificar Riscos', key='button_risk_mode')
 
                 # Risk Identifier      
                 if st.session_state['button_risk_mode']:           
                     database_folder = folders.get_folder(password.user, option_work, 'database') 
-                    if st.session_state['radio_risk_mode'] == 'Refine Mode':
-                        with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
-                            # Risk Identifier from refined template
-                            response_risk_refined_mode = risks.risks_identifier(password.user, option_work)
-                            with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
-                                f.write(response_risk_refined_mode)
-                            st.success("Riscos no modo Refine identificados com sucesso! 🎉")
+                    with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
+                        response_risk_refined_mode, cb = risks.risks_identifier(password.user, option_work)      
+                    with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
+                        f.write(response_risk_refined_mode)
+                    st.success("Riscos identificados com sucesso! 🎉")
+                    st.write(cb)
+                    st.write(response_risk_refined_mode)
                     
-                    elif st.session_state['radio_risk_mode'] == 'Recursive Mode':
-                        with st.spinner("Identificando Riscos modo RECURSIVE .... 💫"):
-                            # Risk Identifier from recursive sqlite
-                            response_risk_recursive_mode = pdf_inspector.risk_identifier(password.user, option_work)
-                            with open(os.path.join(database_folder, 'risks_type_recursive_sqlite.txt'), 'w') as f:
-                                f.write("\n\n".join(response_risk_recursive_mode))
-                            st.success("Riscos no modo recursive identificados com sucesso! 🎉")
+                    # elif st.session_state['radio_risk_mode'] == 'Recursive Mode':
+                    #     with st.spinner("Identificando Riscos modo RECURSIVE .... 💫"):
+                    #         # Risk Identifier from recursive sqlite
+                    #         response_risk_recursive_mode = pdf_inspector.risk_identifier(password.user, option_work)
+                    #         with open(os.path.join(database_folder, 'risks_type_recursive_sqlite.txt'), 'w') as f:
+                    #             f.write("\n\n".join(response_risk_recursive_mode))
+                    #         st.success("Riscos no modo recursive identificados com sucesso! 🎉")
 
  
                         # st.write(f"Riscos Identificados para a Unidade: {agency}")     
