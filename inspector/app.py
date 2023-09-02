@@ -3,6 +3,8 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 import json
 
@@ -12,6 +14,8 @@ import chave
 import folders
 import pdf_inspector
 import risks
+
+from apps import public_contest_app
 
 
 def main():
@@ -26,13 +30,15 @@ def main():
                                 options=["Página Inicial", 
                                         "Carregar Documentos", 
                                         "Analisar Documentos",
-                                        "Identificar Riscos"],
+                                        "Identificar Riscos",
+                                        "Concurso Público"],
                                 
                                 # Icons from https://icons.getbootstrap.com/
                                 icons=['house', 
                                        "filetype-pdf",
                                        "search",
-                                       "activity"])            
+                                       "activity",
+                                       "calendar-check"])            
             
         if option == "Página Inicial":
             st.title("Página Inicial")
@@ -105,13 +111,9 @@ def main():
                     option_work = st.selectbox(label="Lista de Trabalhos",
                                                options=user_work_list)
                     st.write('Você Selecionou:', option_work)
-                   
                     st.session_state['work_folder'] = folders.get_folder(user=password.user,
                                                                               work_key=option_work,
                                                                               type_of_folder='work_folder')
-                    # st.radio('Tipo de Análise', options=['Refine Mode',
-                    #                                'Recursive Mode'], 
-                    #                                key='radio_risk_mode')
                     st.button('Identificar Riscos', key='button_risk_mode')
 
                 # Risk Identifier      
@@ -125,21 +127,12 @@ def main():
                     st.write(cb)
                     st.write(response_risk_refined_mode)
                     
-                    # elif st.session_state['radio_risk_mode'] == 'Recursive Mode':
-                    #     with st.spinner("Identificando Riscos modo RECURSIVE .... 💫"):
-                    #         # Risk Identifier from recursive sqlite
-                    #         response_risk_recursive_mode = pdf_inspector.risk_identifier(password.user, option_work)
-                    #         with open(os.path.join(database_folder, 'risks_type_recursive_sqlite.txt'), 'w') as f:
-                    #             f.write("\n\n".join(response_risk_recursive_mode))
-                    #         st.success("Riscos no modo recursive identificados com sucesso! 🎉")
-
- 
-                        # st.write(f"Riscos Identificados para a Unidade: {agency}")     
-                        # st.write(f"{response_risk}")
-            
             except Exception as e:
                 st.warning('Problemas ao carregar os arquivos. Por favor, carregue documentos.')
                 return
+        
+        elif option == "Concurso Público":
+            public_contest_app.app()
 
 
 def upload_arquivos(type):
