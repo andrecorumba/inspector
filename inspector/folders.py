@@ -3,7 +3,7 @@ import os
 # Importando módulos internos
 import chave
 
-def create_folders(folder_user, work_key):
+def create_folders(user_folder, work_key):
     """
     Create folders for a new user.
 
@@ -12,22 +12,22 @@ def create_folders(folder_user, work_key):
     """
 
     # Cria a folder principal do usuário caso não exista.
-    if not os.path.exists(folder_user):
-        os.makedirs(folder_user)
+    if not os.path.exists(user_folder):
+        os.makedirs(user_folder)
 
     # Traça o caminho e cria a para a folder do trabalho do usuário
-    folder_do_trabalho = os.path.join(folder_user, work_key)
-    if not os.path.exists(folder_do_trabalho):
-        os.makedirs(folder_do_trabalho)
+    work_folder = os.path.join(user_folder, work_key)
+    if not os.path.exists(work_folder):
+        os.makedirs(work_folder)
 
     # Caminho para as subfolders de cada trabalho chave_ide
-    folder_vectordb = os.path.join(folder_do_trabalho, "vectordb")
-    folder_database = os.path.join(folder_do_trabalho, "database")
-    folder_temporaria = os.path.join(folder_do_trabalho, "temporary")
-    folder_aquivos= os.path.join(folder_do_trabalho, "files")
+    vectordb_folder = os.path.join(work_folder, "vectordb")
+    database_folder = os.path.join(work_folder, "database")
+    responses_folder = os.path.join(work_folder, "responses")
+    files_folder= os.path.join(work_folder, "files")
 
     # Cria as subfolders caso não existam
-    for subfolder_path in [folder_vectordb, folder_database, folder_temporaria, folder_aquivos]:
+    for subfolder_path in [vectordb_folder, database_folder, responses_folder, files_folder]:
         if not os.path.exists(subfolder_path):
             os.makedirs(subfolder_path)
     
@@ -45,7 +45,7 @@ def get_folder(user, work_key, type_of_folder):
                                     'data', 
                                     user, 
                                     work_key)
-
+    # Any type of folder
     else:
         folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                     '..', 

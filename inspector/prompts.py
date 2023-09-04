@@ -88,29 +88,29 @@ A partir de documentos presentes no contexto você deve identificar eventos de r
 Não coloque números de processos licitatório ou contratos no texto, mas apenas de forma geral.
 
 Definições:
-evento_de_risco: descreve os eventos de riscos identificados.
-causa: descreve as possíveis causas, condições que dão origem à possibilidade.
-consequencia: descreve os possíveis efeitos ou consequências do evento de risco.
-classificacao: classificação quanto à categoria e natureza. 
+Evento de Risco: descreve os eventos de riscos identificados.
+Causa: descreve as possíveis causas, condições que dão origem à possibilidade.
+Consequencia: descreve os possíveis efeitos ou consequências do evento de risco.
+Classificacao: classificação quanto à categoria e natureza. 
 
 Resposta:
 A resposta deve ser clara, direta, formal, em português, como no exemplo a seguir.
 
 Exemplos de Resposta: 
-evento_de_risco 1: Abandono nas obras pelas de engenharia empresas construtoras.
-causa: Falta de fiscalização.
-consequencia: Atraso na entrega das obras.
-classificacao: Operacional, não orçamentário-financeira.
+Evento de Risco 1: Abandono nas obras pelas de engenharia empresas construtoras.
+Causa: Falta de fiscalização.
+Consequencia: Atraso na entrega das obras.
+Classificacao: Operacional, não orçamentário-financeira.
   
-evento_de_risco 2: Antecipação nos pagamentos às empresas construtoras em relação à  efetiva execução das obras.
-causa: Falta de fiscalização.
-consequencia: Aumento do risco de desvios de recursos.
-classificacao: Operacional, não orçamentário-financeira.
+Evento de Risco 2: Antecipação nos pagamentos às empresas construtoras em relação à  efetiva execução das obras.
+Causa: Falta de fiscalização.
+Consequencia: Aumento do risco de desvios de recursos.
+Classificacao: Operacional, não orçamentário-financeira.
   
-evento_de_risco 3: Direcionamento a fornecedores na aplicação dos recursos públicos.
-causa: Fragilidades no processo de seleção de fornecedores.
-consequencia: Aumento do risco de desvios de recursos.
-classificacao: Operacional, não orçamentário-financeira.
+Evento de Risco 3: Direcionamento a fornecedores na aplicação dos recursos públicos.
+Causa: Fragilidades no processo de seleção de fornecedores.
+Consequencia: Aumento do risco de desvios de recursos.
+Classificacao: Operacional, não orçamentário-financeira.
 
 Contexto:
 {text}
@@ -136,10 +136,10 @@ Dado o novo contexto, refine o texto dos riscos originais ou adicione novos (se 
 Se o contexto não for útil, mantenha apenas os riscos originais. Numere os eventos de risco de forma sequencial.
 
 Exemplos de Resposta: 
-evento_de_risco 1: Abandono nas obras pelas de engenharia empresas construtoras.
-causa: Falta de fiscalização.
-consequencia: Atraso na entrega das obras.
-classificacao: Operacional, não orçamentário-financeira.
+Evento de Risco 1: Abandono nas obras pelas de engenharia empresas construtoras.
+Causa: Falta de fiscalização.
+Consequencia: Atraso na entrega das obras.
+Classificacao: Operacional, não orçamentário-financeira.
 """
 )
 REFINE_PROMPT_RISKS = PromptTemplate(

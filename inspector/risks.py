@@ -5,6 +5,7 @@ from streamlit_option_menu import option_menu
 import os
 
 import openai
+import shutil
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -22,6 +23,50 @@ import folders
 
 CHUNK_SIZE_RISK = 10000
 CHUNK_OVERLAP_RISK = 200
+
+def risk_identifier_individual_file(user, option_work):
+    # Get folders to work
+    try:
+        work_folder = folders.get_folder(user, option_work, 'work_folder')  
+        files_folder = folders.get_folder(user, option_work, 'files')
+        response_folder = folders.get_folder(user, option_work, 'responses')  
+    except FileNotFoundError:
+        st.error('Erro ao carregar as pastas de trabalho.')
+        return
+    
+    # get all files in files_folder
+    files = os.listdir(files_folder)
+
+    for file in files:
+        # LOAD -  Load the pdf documents
+        loader = PyPDFLoader(os.path.join(files_folder, file))
+        document = loader.load()
+
+        # SPLIT - Split the documents into chunks
+        documents_for_risk_gen = split_text_risk(str(document), 
+                   chunk_size=CHUNK_SIZE_RISK, 
+                   chunk_overlap=CHUNK_OVERLAP_RISK)
+
+        # Initialize the LLM
+        llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
+
+
+        # Generate risk analysis
+        risks_chain = load_summarize_chain(llm=llm, 
+                                           chain_type="refine", 
+                                           question_prompt=RISK_IDENTIFIER_PROMPT, 
+                                           refine_prompt=REFINE_PROMPT_RISKS)
+        with get_openai_callback() as cb:
+            response_risk = risks_chain.run(documents_for_risk_gen)
+
+        # Save the response
+        with open(os.path.join(response_folder, f'risks_{file}.txt'), 'w') as f:
+            f.write(f"Arquivo: {file}\n\nCustos: {cb}\n\nRiscos Identificados:\n\n{response_risk}\n\n")
+
+    # Zip files in response folder
+    zip_file = shutil.make_archive(option_work, 'zip', response_folder)
+        
+    return response_risk, cb, zip_file
 
 def risks_identifier(user, option_work):
     """

@@ -26,26 +26,27 @@ def app():
         
         # if st.session_state['button_risk_mode']:           
         database_folder = folders.get_folder(password.user, work_key, 'database') 
-        with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
-            response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, work_key)      
+        with st.spinner("Identificando Riscos .... 💫"):                  
+            #response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, work_key)      
+            response_risk_refined_mode, cb, zip_file = risks.risk_identifier_individual_file(password.user, work_key)
 
-        response_file_name = f'{work_key}.txt'
+        # response_file_name = f'{work_key}.txt'
         
         # save response files
-        with open(os.path.join(database_folder, response_file_name), 'w') as f:
-            f.write(f"RELATÓRIO DE IDENTIFICAÇÃO DE RISCOS\n\n{files_loaded}\n\n{cb}\n\n{response_risk_refined_mode}\n\n")
+        # with open(os.path.join(database_folder, response_file_name), 'w') as f:
+        #     f.write(f"RELATÓRIO DE IDENTIFICAÇÃO DE RISCOS\n\n{files_loaded}\n\n{cb}\n\n{response_risk_refined_mode}\n\n")
         
         # print response files
         st.success("Riscos identificados com sucesso! 🎉")
-        st.write(cb)
-        st.write(response_risk_refined_mode)
+        # st.write(cb)
+        # st.write(response_risk_refined_mode)
 
         # dowload response files
-        with open(os.path.join(database_folder, response_file_name), 'rb') as f:
+        with open(os.path.join(database_folder, zip_file), 'rb') as f:
             st.download_button(label="Baixar Relatório de Riscos",
                                 data=f,
-                                file_name=response_file_name,
-                                mime='text/plain')
+                                file_name=zip_file,
+                                mime='application/zip')
 
 
 
