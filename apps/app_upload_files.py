@@ -6,7 +6,7 @@ from inspector import folders, password, chave
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-def upload_files(type) -> str:
+def upload_files(type, type_of_work: str) -> str:
     """
     Function to upload files to the user folder.
 
@@ -28,11 +28,8 @@ def upload_files(type) -> str:
                                         '..', 
                                         'data', 
                                         password.user)
-            
-            work_key = chave.cria_chave('documentos')
-
+            work_key = chave.cria_chave(type_of_work)
             folders.create_folders(user_folder, work_key)
-
             files_folder = folders.get_folder(password.user, 
                                                   work_key, 
                                                   'files')
@@ -42,9 +39,7 @@ def upload_files(type) -> str:
                     f.write((file).getbuffer())
             
             files_lenght = len(os.listdir(files_folder))
-
-            st.success(f"Sucesso! Quantidade de Arquivos Carregados: {files_lenght}")
-            st.markdown(f"### Código deste trabalho: *{work_key}*")
+            st.success(f"Arquivos Carregados: {files_lenght}. Código do trabalho: {work_key}")
     
             return work_key
 

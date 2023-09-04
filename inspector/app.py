@@ -49,7 +49,7 @@ def main():
             st.title("Carregar Documentos")
             st.write("Página para analisar documentos.")
 
-            work_key = app_upload_files.upload_files(type=['pdf'])
+            work_key = app_upload_files.upload_files(type=['pdf'], type_of_work='documentos')
             if work_key:
                 pdf_inspector.pdf_load_split_vector(password.user, work_key)
                 # pdf_inspector.generate_first_questions(password.user, work_key)

@@ -20,7 +20,7 @@ def app():
     #                                                                 work_key=option_work,
     #                                                                 type_of_folder='work_folder')
 
-    work_key = app_upload_files.upload_files(type=['pdf'])
+    work_key = app_upload_files.upload_files(type=['pdf'], type_of_work='riscos')
     if work_key is not None:
         # st.button('Identificar Riscos', key='button_risk_mode')     
         
@@ -28,11 +28,25 @@ def app():
         database_folder = folders.get_folder(password.user, work_key, 'database') 
         with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
             response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, work_key)      
-        with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
+
+        response_file_name = f'{work_key}.txt'
+        
+        # save response files
+        with open(os.path.join(database_folder, response_file_name), 'w') as f:
             f.write(f"RELATÓRIO DE IDENTIFICAÇÃO DE RISCOS\n\n{files_loaded}\n\n{cb}\n\n{response_risk_refined_mode}\n\n")
+        
+        # print response files
         st.success("Riscos identificados com sucesso! 🎉")
         st.write(cb)
         st.write(response_risk_refined_mode)
+
+        # dowload response files
+        with open(os.path.join(database_folder, response_file_name), 'rb') as f:
+            st.download_button(label="Baixar Relatório de Riscos",
+                                data=f,
+                                file_name=response_file_name,
+                                mime='text/plain')
+
 
 
 if __name__ == "__main__":
