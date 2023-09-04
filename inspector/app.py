@@ -13,9 +13,8 @@ import password
 import chave
 import folders
 import pdf_inspector
-import risks
 
-from apps import public_contest_app
+from apps import public_contest_app, app_risks, app_upload_files
 
 
 def main():
@@ -50,10 +49,10 @@ def main():
             st.title("Carregar Documentos")
             st.write("Página para analisar documentos.")
 
-            work_key = upload_arquivos(type=['pdf'])
+            work_key = app_upload_files.upload_files(type=['pdf'])
             if work_key:
                 pdf_inspector.pdf_load_split_vector(password.user, work_key)
-                pdf_inspector.generate_first_questions(password.user, work_key)
+                # pdf_inspector.generate_first_questions(password.user, work_key)
 
         elif option == "Analisar Documentos":   
             try:
@@ -99,83 +98,85 @@ def main():
                 return
             
         elif option == "Identificar Riscos":   
-            try:
-                user_work_list = []
-                for item in os.listdir(folders.get_folder(user=password.user,
-                                                         work_key='todos',
-                                                         type_of_folder='user_folder')):
-                    if not item.startswith('.'):
-                        user_work_list.append(item)
+            app_risks.app()
+            # app_upload_files.upload_files(type=['pdf'])
+            # try:
+            #     user_work_list = []
+            #     for item in os.listdir(folders.get_folder(user=password.user,
+            #                                              work_key='todos',
+            #                                              type_of_folder='user_folder')):
+            #         if not item.startswith('.'):
+            #             user_work_list.append(item)
             
-                with st.sidebar:
-                    option_work = st.selectbox(label="Lista de Trabalhos",
-                                               options=user_work_list)
-                    st.write('Você Selecionou:', option_work)
-                    st.session_state['work_folder'] = folders.get_folder(user=password.user,
-                                                                              work_key=option_work,
-                                                                              type_of_folder='work_folder')
-                    st.button('Identificar Riscos', key='button_risk_mode')
+            #     with st.sidebar:
+            #         option_work = st.selectbox(label="Lista de Trabalhos",
+            #                                    options=user_work_list)
+            #         st.write('Você Selecionou:', option_work)
+            #         st.session_state['work_folder'] = folders.get_folder(user=password.user,
+            #                                                                   work_key=option_work,
+            #                                                                   type_of_folder='work_folder')
+            #         st.button('Identificar Riscos', key='button_risk_mode')
 
-                # Risk Identifier      
-                if st.session_state['button_risk_mode']:           
-                    database_folder = folders.get_folder(password.user, option_work, 'database') 
-                    with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
-                        response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, option_work)      
-                    with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
-                        f.write(f"RELATÓRIO DE IDENTIFICAÇÃO DE RISCOS\n\n{files_loaded}\n\n{cb}\n\n{response_risk_refined_mode}\n\n")
-                    st.success("Riscos identificados com sucesso! 🎉")
-                    st.write(cb)
-                    st.write(response_risk_refined_mode)
+            #     # Risk Identifier      
+            #     if st.session_state['button_risk_mode']:           
+            #         database_folder = folders.get_folder(password.user, option_work, 'database') 
+            #         with st.spinner("Identificando Riscos modo REFINE .... 💫"):                  
+            #             response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, option_work)      
+            #         with open(os.path.join(database_folder, 'risks_type_refine.txt'), 'w') as f:
+            #             f.write(f"RELATÓRIO DE IDENTIFICAÇÃO DE RISCOS\n\n{files_loaded}\n\n{cb}\n\n{response_risk_refined_mode}\n\n")
+            #         st.success("Riscos identificados com sucesso! 🎉")
+            #         st.write(cb)
+            #         st.write(response_risk_refined_mode)
                     
-            except Exception as e:
-                st.warning('Problemas ao carregar os arquivos. Por favor, carregue documentos.')
-                return
+            # except Exception as e:
+            #     st.warning('Problemas ao carregar os arquivos. Por favor, carregue documentos.')
+            #     return
         
         elif option == "Concurso Público":
             public_contest_app.app()
 
 
-def upload_arquivos(type):
-    """
-    Function to upload files to the user folder.
+# def upload_files(type):
+#     """
+#     Function to upload files to the user folder.
 
-    Parameters:
-    type (list): List of file types.
+#     Parameters:
+#     type (list): List of file types.
 
-    Return:
-    work_key (str): Work key.
-    """
+#     Return:
+#     work_key (str): Work key.
+#     """
 
-    st.file_uploader('Selecione os arquivos PDF para análise', 
-                     type=type,
-                     accept_multiple_files=True,
-                     key='uploaded_file_list')
+#     st.file_uploader('Selecione os arquivos para análise', 
+#                      type=type,
+#                      accept_multiple_files=True,
+#                      key='uploaded_file_list')
     
-    if st.session_state['uploaded_file_list'] is not None:
-        if st.button('Carregar Arquivos'):
-            user_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                                        '..', 
-                                        'data', 
-                                        password.user)
+#     if st.session_state['uploaded_file_list'] is not None:
+#         if st.button('Carregar Arquivos'):
+#             user_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+#                                         '..', 
+#                                         'data', 
+#                                         password.user)
             
-            work_key = chave.cria_chave('documentos')
+#             work_key = chave.cria_chave('documentos')
 
-            folders.create_folders(user_folder, work_key)
+#             folders.create_folders(user_folder, work_key)
 
-            files_folder = folders.get_folder(password.user, 
-                                                  work_key, 
-                                                  'files')
+#             files_folder = folders.get_folder(password.user, 
+#                                                   work_key, 
+#                                                   'files')
                         
-            for file in st.session_state['uploaded_file_list']:
-                with open(os.path.join(files_folder, file.name),"wb") as f:
-                    f.write((file).getbuffer())
+#             for file in st.session_state['uploaded_file_list']:
+#                 with open(os.path.join(files_folder, file.name),"wb") as f:
+#                     f.write((file).getbuffer())
             
-            files_lenght = len(os.listdir(files_folder))
+#             files_lenght = len(os.listdir(files_folder))
 
-            st.success(f"Sucesso! Quantidade de Arquivos Carregados: {files_lenght}")
-            st.markdown(f"### Código deste trabalho: *{work_key}*")
+#             st.success(f"Sucesso! Quantidade de Arquivos Carregados: {files_lenght}")
+#             st.markdown(f"### Código deste trabalho: *{work_key}*")
     
-            return work_key
+#             return work_key
 
 def show_all(user, work_key):
     """
@@ -213,6 +214,9 @@ def get_questions(user, work_key):
     database_folder = folders.get_folder(user, 
                                         work_key, 
                                         'database')
+    
+    if not os.path.exists(os.path.join(database_folder, 'qa.json')):
+        pdf_inspector.generate_first_questions(password.user, work_key)
     
     with open(os.path.join(database_folder, 'qa.json'), 'r') as f:
         qa = json.load(f)

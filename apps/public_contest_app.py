@@ -8,6 +8,8 @@ def app():
                     type=['pdf'],
                     accept_multiple_files=False,
                     key='uploaded_file_public_contest')
+    
+    
 
 if __name__ == "__main__":
     app()

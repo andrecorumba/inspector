@@ -10,9 +10,9 @@ from dotenv import load_dotenv, find_dotenv
 
 from langchain.chains.summarize import load_summarize_chain
 from langchain.document_loaders.pdf import PyPDFDirectoryLoader
+from langchain.document_loaders.pdf import PyPDFLoader
 from langchain.text_splitter import TokenTextSplitter
 from langchain.docstore.document import Document
-
 from langchain.callbacks import get_openai_callback
 
 # Import Local Modules
