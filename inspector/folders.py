@@ -1,7 +1,7 @@
 import os
 
 # Importando módulos internos
-import chave
+from inspector import chave
 
 def create_folders(user_folder, work_key):
     """

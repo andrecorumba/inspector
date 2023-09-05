@@ -3,33 +3,37 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 import os
+import sys 
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 import openai
 import shutil
 
 from dotenv import load_dotenv, find_dotenv
 
-from langchain.chains.summarize import load_summarize_chain
-from langchain.document_loaders.pdf import PyPDFDirectoryLoader
+from langchain.llms import OpenAI
 from langchain.document_loaders.pdf import PyPDFLoader
 from langchain.text_splitter import TokenTextSplitter
 from langchain.docstore.document import Document
+from langchain.chains.summarize import load_summarize_chain
 from langchain.callbacks import get_openai_callback
 
 # Import Local Modules
-from prompts import RISK_IDENTIFIER_PROMPT, REFINE_PROMPT_RISKS
-import pdf_inspector
-import folders
+from inspector.prompts import RISK_IDENTIFIER_PROMPT, REFINE_PROMPT_RISKS
+from inspector import folders
 
 CHUNK_SIZE_RISK = 10000
 CHUNK_OVERLAP_RISK = 200
 
-def risk_identifier_individual_file(user, work_key):
+def risk_identifier_individual_file(user, work_key, text_input_openai_api_key):
     # Get folders to work
     work_folder = folders.get_folder(user, work_key, 'work_folder')  
     upload_folder = folders.get_folder(user, work_key, 'upload')
     response_folder = folders.get_folder(user, work_key, 'responses')  
     download_folder = folders.get_folder(user, work_key, 'download')
+
+    # get OpenAI API Key
+    openai.api_key = get_api_key(text_input_openai_api_key)
     
     # get all files in files_folder
     files = os.listdir(upload_folder)
@@ -45,8 +49,8 @@ def risk_identifier_individual_file(user, work_key):
                    chunk_overlap=CHUNK_OVERLAP_RISK)
 
         # Initialize the LLM
-        llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
-
+        # llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
+        llm = OpenAI(temperature=1.1, model_name="gpt-3.5-turbo-16k", openai_api_key=openai.api_key)
 
         # Generate risk analysis
         risks_chain = load_summarize_chain(llm=llm, 
@@ -64,60 +68,6 @@ def risk_identifier_individual_file(user, work_key):
         
     return response_risk, cb, zip_file
 
-# def risks_identifier(user, option_work):
-#     """
-#     Function to identify risks in documents.
-
-#     Parameters:
-#     user (str): User name.
-#     option_work (str): Work key.
-
-#     Return:
-#     response_risk (str): Response from LLM.
-#     """
-    
-#     # Load the API key
-#     _ = load_dotenv(find_dotenv())
-#     openai.api_key = os.environ['OPENAI_API_KEY']
-
-
-#     # Get folders to work
-#     try:
-#         work_folder = folders.get_folder(user, option_work, 'work_folder')  
-#         files_folder = folders.get_folder(user, option_work, 'files')  
-#     except FileNotFoundError:
-#         st.error('Erro ao carregar as pastas de trabalho.')
-#         return
-    
-#     try:
-#         # LOAD -  Load the pdf documents
-#         loader = PyPDFDirectoryLoader(files_folder)
-#         documents = loader.load()
-
-#         files_loaded = documents[0].metadata['source']
-
-#         # SPLIT - Split the documents into chunks
-#         documents_for_risk_gen = split_text_risk(str(documents), 
-#                    chunk_size=CHUNK_SIZE_RISK, 
-#                    chunk_overlap=CHUNK_OVERLAP_RISK)
-
-#         # Initialize the LLM
-#         llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
-
-
-#         # Generate risk analysis
-#         risks_chain = load_summarize_chain(llm=llm, 
-#                                            chain_type="refine", 
-#                                            question_prompt=RISK_IDENTIFIER_PROMPT, 
-#                                            refine_prompt=REFINE_PROMPT_RISKS)
-#         with get_openai_callback() as cb:
-#             response_risk = risks_chain.run(documents_for_risk_gen)
-        
-#         return response_risk, cb, files_loaded
-    
-#     except Exception as e:
-#         st.error('Erro ao processar LLM.', e)
-#         return
     
 # Function to split text into chunks
 def split_text_risk(text, chunk_size, chunk_overlap):
@@ -141,5 +91,15 @@ def save_file(response_folder, file, work_key, response_risk, cb):
         Custos: {cb}
         Riscos Identificados:
         {response_risk}"""
-        #f.write(f"Arquivo: {file}\n\nCustos: {cb}\n\nRiscos Identificados:\n\n{response_risk}\n\n")
+
         f.write(file_content)
+
+def get_api_key(text_input_openai_api_key: str):
+
+    if text_input_openai_api_key == 'env':
+        _ = load_dotenv(find_dotenv())
+        api_key = os.environ['OPENAI_API_KEY']
+    else:
+        api_key = text_input_openai_api_key
+
+    return api_key

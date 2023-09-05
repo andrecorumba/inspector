@@ -116,6 +116,7 @@ Contexto:
 {text}
 
 A resposta deve ser clara, direta e formal em português, seguindo as orientações do contexto e o modelo de respostas previsto.
+Caso não encontre nenhum evento de risco, escreva apenas: "Não consegui encontrar nenhum evento de risco."
 '''
 
 RISK_IDENTIFIER_PROMPT = PromptTemplate(input_variables=['text'],
