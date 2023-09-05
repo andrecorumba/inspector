@@ -24,12 +24,13 @@ import folders
 CHUNK_SIZE_RISK = 10000
 CHUNK_OVERLAP_RISK = 200
 
-def risk_identifier_individual_file(user, option_work):
+def risk_identifier_individual_file(user, work_key):
     # Get folders to work
     try:
-        work_folder = folders.get_folder(user, option_work, 'work_folder')  
-        files_folder = folders.get_folder(user, option_work, 'files')
-        response_folder = folders.get_folder(user, option_work, 'responses')  
+        work_folder = folders.get_folder(user, work_key, 'work_folder')  
+        files_folder = folders.get_folder(user, work_key, 'files')
+        response_folder = folders.get_folder(user, work_key, 'responses')  
+        database_folder = folders.get_folder(user, work_key, 'database')
     except FileNotFoundError:
         st.error('Erro ao carregar as pastas de trabalho.')
         return
@@ -60,68 +61,68 @@ def risk_identifier_individual_file(user, option_work):
             response_risk = risks_chain.run(documents_for_risk_gen)
 
         # Save the response
-        with open(os.path.join(response_folder, f'risks_{file}.txt'), 'w') as f:
-            f.write(f"Arquivo: {file}\n\nCustos: {cb}\n\nRiscos Identificados:\n\n{response_risk}\n\n")
+        save_file(response_folder, file, work_key, response_risk, cb)
 
     # Zip files in response folder
-    zip_file = shutil.make_archive(option_work, 'zip', response_folder)
+    zip_file = shutil.make_archive(os.path.join(response_folder, work_key), 'zip', root_dir=response_folder)
+
         
     return response_risk, cb, zip_file
 
-def risks_identifier(user, option_work):
-    """
-    Function to identify risks in documents.
+# def risks_identifier(user, option_work):
+#     """
+#     Function to identify risks in documents.
 
-    Parameters:
-    user (str): User name.
-    option_work (str): Work key.
+#     Parameters:
+#     user (str): User name.
+#     option_work (str): Work key.
 
-    Return:
-    response_risk (str): Response from LLM.
-    """
+#     Return:
+#     response_risk (str): Response from LLM.
+#     """
     
-    # Load the API key
-    _ = load_dotenv(find_dotenv())
-    openai.api_key = os.environ['OPENAI_API_KEY']
+#     # Load the API key
+#     _ = load_dotenv(find_dotenv())
+#     openai.api_key = os.environ['OPENAI_API_KEY']
 
 
-    # Get folders to work
-    try:
-        work_folder = folders.get_folder(user, option_work, 'work_folder')  
-        files_folder = folders.get_folder(user, option_work, 'files')  
-    except FileNotFoundError:
-        st.error('Erro ao carregar as pastas de trabalho.')
-        return
+#     # Get folders to work
+#     try:
+#         work_folder = folders.get_folder(user, option_work, 'work_folder')  
+#         files_folder = folders.get_folder(user, option_work, 'files')  
+#     except FileNotFoundError:
+#         st.error('Erro ao carregar as pastas de trabalho.')
+#         return
     
-    try:
-        # LOAD -  Load the pdf documents
-        loader = PyPDFDirectoryLoader(files_folder)
-        documents = loader.load()
+#     try:
+#         # LOAD -  Load the pdf documents
+#         loader = PyPDFDirectoryLoader(files_folder)
+#         documents = loader.load()
 
-        files_loaded = documents[0].metadata['source']
+#         files_loaded = documents[0].metadata['source']
 
-        # SPLIT - Split the documents into chunks
-        documents_for_risk_gen = split_text_risk(str(documents), 
-                   chunk_size=CHUNK_SIZE_RISK, 
-                   chunk_overlap=CHUNK_OVERLAP_RISK)
+#         # SPLIT - Split the documents into chunks
+#         documents_for_risk_gen = split_text_risk(str(documents), 
+#                    chunk_size=CHUNK_SIZE_RISK, 
+#                    chunk_overlap=CHUNK_OVERLAP_RISK)
 
-        # Initialize the LLM
-        llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
+#         # Initialize the LLM
+#         llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
 
 
-        # Generate risk analysis
-        risks_chain = load_summarize_chain(llm=llm, 
-                                           chain_type="refine", 
-                                           question_prompt=RISK_IDENTIFIER_PROMPT, 
-                                           refine_prompt=REFINE_PROMPT_RISKS)
-        with get_openai_callback() as cb:
-            response_risk = risks_chain.run(documents_for_risk_gen)
+#         # Generate risk analysis
+#         risks_chain = load_summarize_chain(llm=llm, 
+#                                            chain_type="refine", 
+#                                            question_prompt=RISK_IDENTIFIER_PROMPT, 
+#                                            refine_prompt=REFINE_PROMPT_RISKS)
+#         with get_openai_callback() as cb:
+#             response_risk = risks_chain.run(documents_for_risk_gen)
         
-        return response_risk, cb, files_loaded
+#         return response_risk, cb, files_loaded
     
-    except Exception as e:
-        st.error('Erro ao processar LLM.', e)
-        return
+#     except Exception as e:
+#         st.error('Erro ao processar LLM.', e)
+#         return
     
 # Function to split text into chunks
 def split_text_risk(text, chunk_size, chunk_overlap):
@@ -137,3 +138,13 @@ def split_text_risk(text, chunk_size, chunk_overlap):
     documents = [Document(page_content=t) for t in text_chunks]
 
     return documents
+
+def save_file(response_folder, file, work_key, response_risk, cb):
+    with open(os.path.join(response_folder, f'risks_{file}.txt'), 'w') as f:
+        file_content = f"""Chave do Trabalho:{work_key}
+        Arquivo: {file}
+        Custos: {cb}
+        Riscos Identificados:
+        {response_risk}"""
+        #f.write(f"Arquivo: {file}\n\nCustos: {cb}\n\nRiscos Identificados:\n\n{response_risk}\n\n")
+        f.write(file_content)

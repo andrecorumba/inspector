@@ -1,7 +1,8 @@
 import string
 import random
+#import uuid
 
-def cria_chave(tipo_de_trabalho):
+def create_key(type_of_work):
     ''' 
     Função que cria uma chave aleatória para identificar o caso de uso do app.
 
@@ -12,15 +13,17 @@ def cria_chave(tipo_de_trabalho):
         Chave (str): Chave aleatória de 08 caracteres.
     '''
 
-    # Gera uma chave aleatória com 8 caracteres
-    tamanho_chave = 8
-    caracteres_permitidos = string.ascii_letters + string.digits
-    aleatorio = ''.join(random.choice(caracteres_permitidos) for _ in range(tamanho_chave))
+    # Create a random combination of letters and numbers
+    len_key = 6
+    # letters = string.ascii_letters + string.digits
+    # combination = ''.join(random.choice(letters) for _ in range(len_key))
+    combination = ''.join(random.choice(string.digits) for _ in range(len_key))
     
-    # Concatena o tipo_de_trabalho com a chave aleatória
-    chave = tipo_de_trabalho + '_' + aleatorio
-    
-    return chave
+    # Concatenate the type of work with the combination
+    key = type_of_work + '_' + combination
+    # key = str(uuid.uuid4())
+
+    return key
 
 if __name__ == '__main__':
-    print(cria_chave('documentos'))
+    print(create_key('documentos'))

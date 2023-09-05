@@ -28,7 +28,7 @@ def upload_files(type, type_of_work: str) -> str:
                                         '..', 
                                         'data', 
                                         password.user)
-            work_key = chave.cria_chave(type_of_work)
+            work_key = chave.create_key(type_of_work)
             folders.create_folders(user_folder, work_key)
             files_folder = folders.get_folder(password.user, 
                                                   work_key, 

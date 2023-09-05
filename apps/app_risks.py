@@ -25,7 +25,7 @@ def app():
         # st.button('Identificar Riscos', key='button_risk_mode')     
         
         # if st.session_state['button_risk_mode']:           
-        database_folder = folders.get_folder(password.user, work_key, 'database') 
+        response_folder = folders.get_folder(password.user, work_key, 'responses') 
         with st.spinner("Identificando Riscos .... 💫"):                  
             #response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, work_key)      
             response_risk_refined_mode, cb, zip_file = risks.risk_identifier_individual_file(password.user, work_key)
@@ -42,7 +42,7 @@ def app():
         # st.write(response_risk_refined_mode)
 
         # dowload response files
-        with open(os.path.join(database_folder, zip_file), 'rb') as f:
+        with open(os.path.join(response_folder, zip_file), 'rb') as f:
             st.download_button(label="Baixar Relatório de Riscos",
                                 data=f,
                                 file_name=zip_file,
