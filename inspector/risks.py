@@ -26,21 +26,17 @@ CHUNK_OVERLAP_RISK = 200
 
 def risk_identifier_individual_file(user, work_key):
     # Get folders to work
-    try:
-        work_folder = folders.get_folder(user, work_key, 'work_folder')  
-        files_folder = folders.get_folder(user, work_key, 'files')
-        response_folder = folders.get_folder(user, work_key, 'responses')  
-        database_folder = folders.get_folder(user, work_key, 'database')
-    except FileNotFoundError:
-        st.error('Erro ao carregar as pastas de trabalho.')
-        return
+    work_folder = folders.get_folder(user, work_key, 'work_folder')  
+    upload_folder = folders.get_folder(user, work_key, 'upload')
+    response_folder = folders.get_folder(user, work_key, 'responses')  
+    download_folder = folders.get_folder(user, work_key, 'download')
     
     # get all files in files_folder
-    files = os.listdir(files_folder)
+    files = os.listdir(upload_folder)
 
     for file in files:
         # LOAD -  Load the pdf documents
-        loader = PyPDFLoader(os.path.join(files_folder, file))
+        loader = PyPDFLoader(os.path.join(upload_folder, file))
         document = loader.load()
 
         # SPLIT - Split the documents into chunks
@@ -64,8 +60,7 @@ def risk_identifier_individual_file(user, work_key):
         save_file(response_folder, file, work_key, response_risk, cb)
 
     # Zip files in response folder
-    zip_file = shutil.make_archive(os.path.join(response_folder, work_key), 'zip', root_dir=response_folder)
-
+    zip_file = shutil.make_archive(os.path.join(download_folder, work_key), 'zip', root_dir=response_folder)
         
     return response_risk, cb, zip_file
 

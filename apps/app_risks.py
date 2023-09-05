@@ -4,9 +4,9 @@ import os
 from inspector import folders, risks, password
 from apps import app_upload_files
 
-def app():
+def app(user):
     # user_work_list = []
-    # for item in os.listdir(folders.get_folder(user=password.user,
+    # for item in os.listdir(folders.get_folder(user=user,
     #                                             work_key='todos',
     #                                             type_of_folder='user_folder')):
     #     if not item.startswith('.'):
@@ -16,19 +16,19 @@ def app():
     #     option_work = st.selectbox(label="Lista de Trabalhos",
     #                                 options=user_work_list)
     #     st.write('Você Selecionou:', option_work)
-    #     st.session_state['work_folder'] = folders.get_folder(user=password.user,
+    #     st.session_state['work_folder'] = folders.get_folder(user=user,
     #                                                                 work_key=option_work,
     #                                                                 type_of_folder='work_folder')
 
-    work_key = app_upload_files.upload_files(type=['pdf'], type_of_work='riscos')
+    work_key = app_upload_files.upload_files(type=['pdf'], type_of_work='riscos', user=user)
     if work_key is not None:
         # st.button('Identificar Riscos', key='button_risk_mode')     
         
         # if st.session_state['button_risk_mode']:           
-        response_folder = folders.get_folder(password.user, work_key, 'responses') 
+        response_folder = folders.get_folder(user, work_key, 'responses') 
         with st.spinner("Identificando Riscos .... 💫"):                  
-            #response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(password.user, work_key)      
-            response_risk_refined_mode, cb, zip_file = risks.risk_identifier_individual_file(password.user, work_key)
+            #response_risk_refined_mode, cb, files_loaded = risks.risks_identifier(user, work_key)      
+            response_risk_refined_mode, cb, zip_file = risks.risk_identifier_individual_file(user, work_key)
 
         # response_file_name = f'{work_key}.txt'
         

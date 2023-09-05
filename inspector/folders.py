@@ -22,12 +22,12 @@ def create_folders(user_folder, work_key):
 
     # Caminho para as subfolders de cada trabalho chave_ide
     vectordb_folder = os.path.join(work_folder, "vectordb")
-    database_folder = os.path.join(work_folder, "database")
+    download_folder = os.path.join(work_folder, "download")
     responses_folder = os.path.join(work_folder, "responses")
-    files_folder= os.path.join(work_folder, "files")
+    upload_folder= os.path.join(work_folder, "upload")
 
     # Cria as subfolders caso não existam
-    for subfolder_path in [vectordb_folder, database_folder, responses_folder, files_folder]:
+    for subfolder_path in [vectordb_folder, download_folder, responses_folder, upload_folder]:
         if not os.path.exists(subfolder_path):
             os.makedirs(subfolder_path)
     

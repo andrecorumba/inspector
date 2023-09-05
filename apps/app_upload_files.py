@@ -6,7 +6,7 @@ from inspector import folders, password, chave
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-def upload_files(type, type_of_work: str) -> str:
+def upload_files(type, type_of_work: str, user) -> str:
     """
     Function to upload files to the user folder.
 
@@ -27,12 +27,12 @@ def upload_files(type, type_of_work: str) -> str:
             user_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
                                         '..', 
                                         'data', 
-                                        password.user)
+                                        user)
             work_key = chave.create_key(type_of_work)
             folders.create_folders(user_folder, work_key)
-            files_folder = folders.get_folder(password.user, 
+            files_folder = folders.get_folder(user, 
                                                   work_key, 
-                                                  'files')
+                                                  'upload')
                         
             for file in st.session_state['uploaded_file_list']:
                 with open(os.path.join(files_folder, file.name),"wb") as f:

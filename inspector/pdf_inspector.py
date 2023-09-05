@@ -48,7 +48,7 @@ def pdf_load_split_vector(usuario, chave_do_trabalho):
     _ = load_dotenv(find_dotenv())
     openai.api_key = os.environ['OPENAI_API_KEY']
 
-    pasta_arquivos = folders.get_folder(usuario, chave_do_trabalho, 'files')
+    pasta_arquivos = folders.get_folder(usuario, chave_do_trabalho, 'upload')
     
     with st.spinner("Processando LLM .... 💫"):
         

@@ -98,7 +98,7 @@ def main():
                 return
             
         elif option == "Identificar Riscos":   
-            app_risks.app()
+            app_risks.app(password.user)
         
         elif option == "Concurso Público":
             public_contest_app.app()
@@ -116,11 +116,11 @@ def show_all(user, work_key):
     None
     """
 
-    database_folder = folders.get_folder(user, 
+    response_folder = folders.get_folder(user, 
                                          work_key, 
-                                         'database')
+                                         'response')
     
-    with open(os.path.join(database_folder, 'qa.txt'), 'r') as f:
+    with open(os.path.join(response_folder, 'qa.txt'), 'r') as f:
         qa = f.readlines()
         for line in qa:
             st.write(line)
@@ -137,14 +137,14 @@ def get_questions(user, work_key):
     questions (list): List of questions.
     """
 
-    database_folder = folders.get_folder(user, 
+    response_folder = folders.get_folder(user, 
                                         work_key, 
-                                        'database')
+                                        'response')
     
-    if not os.path.exists(os.path.join(database_folder, 'qa.json')):
+    if not os.path.exists(os.path.join(response_folder, 'qa.json')):
         pdf_inspector.generate_first_questions(password.user, work_key)
     
-    with open(os.path.join(database_folder, 'qa.json'), 'r') as f:
+    with open(os.path.join(response_folder, 'qa.json'), 'r') as f:
         qa = json.load(f)
         questions = qa[0]['result'].split('\n')
 
