@@ -32,8 +32,9 @@ def risk_identifier_individual_file(user, work_key, text_input_openai_api_key):
     response_folder = folders.get_folder(user, work_key, 'responses')  
     download_folder = folders.get_folder(user, work_key, 'download')
 
-    # get OpenAI API Key
+    # To use LLM OpenAI uncomment the line below
     openai.api_key = get_api_key(text_input_openai_api_key)
+    llm = OpenAI(temperature=1.1, model_name="gpt-3.5-turbo-16k", openai_api_key=openai.api_key)
     
     # get all files in files_folder
     files = os.listdir(upload_folder)
@@ -47,10 +48,6 @@ def risk_identifier_individual_file(user, work_key, text_input_openai_api_key):
         documents_for_risk_gen = split_text_risk(str(document), 
                    chunk_size=CHUNK_SIZE_RISK, 
                    chunk_overlap=CHUNK_OVERLAP_RISK)
-
-        # Initialize the LLM
-        # llm = pdf_inspector.init_llm_openai(temperature=1.1, model="gpt-3.5-turbo-16k")
-        llm = OpenAI(temperature=1.1, model_name="gpt-3.5-turbo-16k", openai_api_key=openai.api_key)
 
         # Generate risk analysis
         risks_chain = load_summarize_chain(llm=llm, 
@@ -96,9 +93,10 @@ def save_file(response_folder, file, work_key, response_risk, cb):
 
 def get_api_key(text_input_openai_api_key: str):
 
-    if text_input_openai_api_key == 'env':
+    if text_input_openai_api_key == 'openai':
         _ = load_dotenv(find_dotenv())
         api_key = os.environ['OPENAI_API_KEY']
+    
     else:
         api_key = text_input_openai_api_key
 
