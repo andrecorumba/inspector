@@ -5,16 +5,21 @@ O **Inspector** é uma aplicação web, escrita em Python, que analisa vários t
 ## Funcionalidades
 
 - Carregar Documentos: Permite ao usuário fazer o upload de arquivos PDF para análise.
-- Analisar Documentos: Utiliza o LangChain e o modelo GPT-3.5-turbo para analisar documentos PDF e responder perguntas do auditor.
-- Elaborar Matriz de Planejamento: Opção para elaborar uma matriz de planejamento de forma interativa.
-- Analisar Conversas Whatsapp: Permite analisar conversas do WhatsApp.
-- Escrever Relatórios: Página para escrever relatórios.
+- Analisar Documentos: Utiliza o LangChain e o modelo GPT-3.5-turbo para analisar documentos PDF e responder perguntas.
+- Identificar Riscos: Opção para identificar riscos em relatórios de auditoria
+- Concurso Público: Permite analisar editais de concurso público.
 
 ## Documentação
 
 A documentação do código encontra-se em:
 
 https://andrecorumba.github.io/inspector/
+
+## Exemplo da Aplicação
+
+Uma PoC para identificar riscos está disponível em:
+
+http://inspector.streamlit.app/
 
 ## Pré-requisitos
 
@@ -64,10 +69,10 @@ alice_foo = "streamlit123"
 bob_bar = "mycrazypw"
 ```
 
-5. Execute o aplicativo Streamlit:
+5. Execute o aplicativo com Streamlit:
 
 ```
-streamlit run app.py
+streamlit run app_with_security.py
 ```
 
 6. O aplicativo será executado em seu navegador padrão. Você pode acessá-lo em `http://localhost:8501`.
@@ -104,25 +109,29 @@ O arquivo `app.py` contém a função principal do projeto chamada `main()`. Ess
 
 A função `main()` é executada quando o arquivo `app.py` é executado diretamente. Ela verifica se a senha do usuário é correta usando a função `password.check_password()`. Em seguida, dependendo da opção selecionada pelo usuário no menu lateral, ele é redirecionado para a página correspondente.
 
-### `documentos.py`
+### `pdf_inspector.py`
 
-O arquivo `documentos.py` contém a função `analisador_arquivos_pdf(usuario)`, que é responsável por analisar arquivos PDF. A função recebe o nome do usuário como entrada e permite que o usuário faça upload de arquivos PDF para análise.
+O arquivo `pdf_inspector.py` contém a função `analisador_arquivos_pdf(usuario)`, que é responsável por analisar arquivos PDF. A função recebe o nome do usuário como entrada e permite que o usuário faça upload de arquivos PDF para análise.
 
 ### `password.py`
 
 O arquivo `password.py` contém a função `check_password()`, que é responsável por verificar se a senha inserida pelo usuário está correta. Ela utiliza o framework Streamlit para exibir campos de entrada para o nome de usuário e senha. Se a senha estiver correta, a função retorna `True`, caso contrário, retorna `False`.
 
-### `pastas.py`
+### `folders.py`
 
-O arquivo `pastas.py` contém a função `cria_pastas(pasta_usuario, chave)`, que é responsável por criar as pastas necessárias para o funcionamento do aplicativo. Ela recebe o caminho da pasta principal do usuário e uma chave aleatória como entrada e cria as pastas relacionadas ao trabalho do usuário.
+O arquivo `folders.py` contém a função `create_folders(user_folder, work_key)`, que é responsável por criar as pastas necessárias para o funcionamento do aplicativo. Ela recebe o caminho da pasta principal do usuário e uma chave aleatória como entrada e cria as pastas relacionadas ao trabalho do usuário.
 
-### `processar_llm.py`
+### `risks.py`
 
-O arquivo `processar_llm.py` contém duas funções principais:
+O arquivo `risks.py` contém a função `risk_identifier_individual_file(user, work_key, text_input_openai_api_key)`, que é responsável por identificar riscos em relatórios de auditoria a partir de um prompt e do uso da biblioteca LangChain e OpenAI.
 
-1. `processar_llm(pasta_do_trabalho)`: Esta função é responsável por processar o LangChain, que envolve carregar os documentos PDF da pasta de trabalho, criar embeddings (representações vetoriais) para esses documentos usando o modelo GPT-3.5-turbo-16k da OpenAI e armazenar esses embeddings no diretório persistente para uso posterior.
+### `work_key.py`
 
-2. `carrega_documento_pdf(pasta_arquivos)`: Esta função é responsável por carregar os documentos PDF da pasta de arquivos usando o LangChain. Os documentos são divididos em pedaços menores para facilitar o processamento.
+O arquivo `work_key.py` contém a função `create_key(type_of_work)`, que é responsável por criar uma chave aleatória para identificar o caso de uso do app.
+
+### `public_contest.py`
+
+Ainda em construção.
 
 ## Bibliotecas usadas:
 

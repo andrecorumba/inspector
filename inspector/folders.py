@@ -1,8 +1,5 @@
 import os
 
-# Importando módulos internos
-from inspector import chave
-
 def create_folders(user_folder, work_key):
     """
     Create folders for a new user.

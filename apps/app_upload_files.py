@@ -2,7 +2,7 @@ import streamlit as st
 import sys
 import os
 
-from inspector import folders, password, chave
+from inspector import folders, password, work_key
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -28,20 +28,20 @@ def upload_files(type, type_of_work: str, user) -> str:
                                         '..', 
                                         'data', 
                                         user)
-            work_key = chave.create_key(type_of_work)
-            folders.create_folders(user_folder, work_key)
+            key = work_key.create_key(type_of_work)
+            folders.create_folders(user_folder, key)
             files_folder = folders.get_folder(user, 
-                                                  work_key, 
-                                                  'upload')
+                                              key, 
+                                              'upload')
                         
             for file in st.session_state['uploaded_file_list']:
                 with open(os.path.join(files_folder, file.name),"wb") as f:
                     f.write((file).getbuffer())
             
             files_lenght = len(os.listdir(files_folder))
-            st.success(f"Arquivos Carregados: {files_lenght}. Código do trabalho: {work_key}")
+            st.success(f"Arquivos Carregados: {files_lenght}. Código do trabalho: {key}")
     
-            return work_key
+            return key
 
 if __name__ == "__main__":
     upload_files(type=['pdf', 'docx', 'doc', 'txt'])

@@ -18,17 +18,13 @@ from langchain.document_loaders.pdf import PyPDFDirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores.chroma import Chroma
-from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
-from langchain.chains.llm import LLMChain
 from langchain.callbacks import get_openai_callback
 
 # Import internal modules
-import chave
-import folders
-from prompts import FIRST_QUESTIONS_PROMPT, USER_QUESTIONS_PROMPT, RISK_IDENTIFIER_PROMPT
-import risks
+from inspector import folders
+from inspector.prompts import FIRST_QUESTIONS_PROMPT, USER_QUESTIONS_PROMPT
 
 CHUNK_SIZE = 500
 
@@ -147,11 +143,19 @@ def pdf_analizer(usuario, option, query, llm, prompt):
         return
     
 def generate_first_questions(usuario, option):
+    # Load the API key
+    _ = load_dotenv(find_dotenv())
+    openai.api_key = os.environ['OPENAI_API_KEY']
+    
     query = " "
     llm = init_llm_openai(temperature=0.4, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, FIRST_QUESTIONS_PROMPT)    
 
 def user_questions(usuario, option, query):
+    # Load the API key
+    _ = load_dotenv(find_dotenv())
+    openai.api_key = os.environ['OPENAI_API_KEY']
+    
     llm = init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, USER_QUESTIONS_PROMPT)
 
