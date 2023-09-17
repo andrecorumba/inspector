@@ -123,7 +123,7 @@ RISK_IDENTIFIER_PROMPT = PromptTemplate(input_variables=['text'],
                                         template=risk_identifier_template)
 
 
-refine_template_risk = ("""
+refine_template_risk = """
 Você é um auditor especializado em rever e refinar a identificação de riscos. Seu objetivo é refinar eventos de risco identificados a partir de relatórios de auditoria da Controladoria-Geral da União (CGU).
 Refine o texto dos eventos de riscos escrevendo-os de forma mais genérica, sem citar números de processos licitatório ou contratos e sem citar nomes de municípios ou unidades da federação, tampouco empresas.
                                                                
@@ -142,8 +142,33 @@ Causa: Falta de fiscalização.
 Consequencia: Atraso na entrega das obras.
 Classificacao: Operacional, não orçamentário-financeira.
 """
-)
+
 REFINE_PROMPT_RISKS = PromptTemplate(
     input_variables=["existing_answer", "text"],
     template=refine_template_risk,
 )
+
+write_report_template = '''Você é um auditor da CGU responsável por escrever relatórios de auditoria.
+A partir do conteúdo json presente no contexto a seguir, extraído da matriz de achados, escreva um relatório de auditoria governamental.
+Considere o seguinte:
+1. Informações sobre a Unidade Auditada estão no campo \"escopos\" e \"descricao\"
+2. Não use nada do campo \"responsaveis\"
+3. Não cite os números de \"id\"
+4. Limite-se a escrever sobre o que está no contexto.
+5. A resposta deve iniciar com o texto do campo \"descricaoSumaria\" de forma destacada.
+
+Contexto: 
+{context}
+
+Formato de Resposta:
+1. A resposta deve iniciar com o texto do campo \"descricaoSumaria\" de forma destacada.
+2. A resposta deverá ser em português escrito na terceira pessoa do singular de modo formal.
+3. Escreva o texto de forma contínua. Não faça separação por tópicos.
+4. Os campos relacionados com a Questão e Subquestão de auditoria não devem ser abordados no texto.
+5. O conteúdo do texto deve citar os números dos documentos extraídos das evidências.
+6. Encerre o texto escrevendo uma recomendação para o Achado.
+7. Não coloque campos para assinatura, ou mensagens de contato.
+8. Não escreve o nome do auditor responsável pela auditoria.
+'''
+WRITE_REPORT_PROMPT = PromptTemplate(input_variables=['context'],
+                                    template=write_report_template)
