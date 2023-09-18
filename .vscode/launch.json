@@ -11,7 +11,7 @@
             "program": "/Users/andreluiz/python-projects/inspector/.venv/bin/streamlit",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["run", "apps/app.py"]
+            "args": ["run", "apps/app_with_security.py"]
         }
     ]
 }

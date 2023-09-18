@@ -20,7 +20,7 @@ def app(user):
     
     if st.session_state['openai_api_key'] != "":
         # get OpenAI API Key
-        #risks.get_api_key(st.session_state['openai_api_key'])
+        risks.get_api_key(st.session_state['openai_api_key'])
         
         # get work key
         work_key = app_upload_files.upload_files(type=['pdf'], type_of_work='riscos', user=user)

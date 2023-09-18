@@ -123,7 +123,7 @@ RISK_IDENTIFIER_PROMPT = PromptTemplate(input_variables=['text'],
                                         template=risk_identifier_template)
 
 
-refine_template_risk = """
+refine_template_risk = ("""
 Você é um auditor especializado em rever e refinar a identificação de riscos. Seu objetivo é refinar eventos de risco identificados a partir de relatórios de auditoria da Controladoria-Geral da União (CGU).
 Refine o texto dos eventos de riscos escrevendo-os de forma mais genérica, sem citar números de processos licitatório ou contratos e sem citar nomes de municípios ou unidades da federação, tampouco empresas.
                                                                
@@ -142,7 +142,7 @@ Causa: Falta de fiscalização.
 Consequencia: Atraso na entrega das obras.
 Classificacao: Operacional, não orçamentário-financeira.
 """
-
+)
 REFINE_PROMPT_RISKS = PromptTemplate(
     input_variables=["existing_answer", "text"],
     template=refine_template_risk,

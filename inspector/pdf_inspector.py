@@ -124,19 +124,18 @@ def pdf_analizer(usuario, option, query, llm, prompt):
 
         with st.spinner("Processando Pergunta .... 💫"):
             resposta = qa_chain({'query': query})
-            
             if query == " ":
                 query = "Perguntas Sugeridas na Pré-Análise:"
-            
             st.write(f"{query}")     
             st.write(resposta['result'])
             st.json(resposta['source_documents'], expanded=False)
-
             dict_resposta = {'query': query, 
                              'result': resposta['result']}
                        
-            save_in_json(dict_resposta, os.path.join(database_folder, 'qa.json'))
-            save_in_txt(dict_resposta, os.path.join(database_folder, 'qa.txt'))
+            #save_in_json(dict_resposta, os.path.join(database_folder, 'qa.json'))
+            # save_in_txt(dict_resposta, os.path.join(database_folder, 'qa.txt'))
+
+            return dict_resposta['result']
     
     except Exception as e:
         st.warning('Erro ao processar LLM.')
@@ -149,13 +148,14 @@ def generate_first_questions(usuario, option):
     
     query = " "
     llm = init_llm_openai(temperature=0.4, model="gpt-3.5-turbo-16k")
-    pdf_analizer(usuario, option, query, llm, FIRST_QUESTIONS_PROMPT)    
+    first_questions = pdf_analizer(usuario, option, query, llm, FIRST_QUESTIONS_PROMPT)   
+    return first_questions 
 
 def user_questions(usuario, option, query):
     # Load the API key
     _ = load_dotenv(find_dotenv())
     openai.api_key = os.environ['OPENAI_API_KEY']
-    
+    #
     llm = init_llm_openai(temperature=0.0, model="gpt-3.5-turbo-16k")
     pdf_analizer(usuario, option, query, llm, USER_QUESTIONS_PROMPT)
 

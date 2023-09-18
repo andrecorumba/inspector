@@ -14,8 +14,10 @@ def app(user: str = "user"):
     Return:
     None
     """
+
+    st.markdown("# Esrever Relatório de Auditoria")
     
-    uploaded = st.file_uploader('Selecione os arquivos para análise', 
+    uploaded = st.file_uploader('Faça upload de um arquivo json contendo a Matriz de Achados.', 
                 type=["json"],
                 accept_multiple_files=False,
                 key='upload_write_report')

@@ -11,7 +11,7 @@ import json
 # Import internal modules
 from inspector import password, folders, pdf_inspector
 
-from apps import public_contest_app, app_risks, app_upload_files
+from apps import public_contest_app, app_risks, app_upload_files, app_write_report
 
 
 def main():
@@ -27,14 +27,14 @@ def main():
                                         "Carregar Documentos", 
                                         "Analisar Documentos",
                                         "Identificar Riscos",
-                                        "Concurso Público"],
+                                        "Escrever Relatório"],
                                 
                                 # Icons from https://icons.getbootstrap.com/
                                 icons=['house', 
                                        "filetype-pdf",
                                        "search",
                                        "activity",
-                                       "calendar-check"])   
+                                       "pencil-fill"])   
             
         if option == "Página Inicial":
             st.title("Página Inicial")
@@ -66,26 +66,21 @@ def main():
                                                options=user_work_list)
                     st.write('Você Selecionou:', option_work)
                     
-                    st.radio('Selecione', options=['Mostrar Histório',
-                                                   'Responder Perguntas Prontas',
-                                                   'Fazer Minhas Perguntas'], 
+                    st.radio('Selecione', options=[# 'Mostrar Histório',
+                                                   'Fazer Minhas Perguntas',
+                                                   'Gerar Perguntas Prontas',], 
                                                    key='radio_show_questions')
-
-                if st.session_state['radio_show_questions'] == 'Mostrar Histório':
-                    show_all(password.user, option_work)
-                
-                elif st.session_state['radio_show_questions'] == 'Responder Perguntas Prontas':
-                    st.multiselect('Selecione as perguntas', 
-                                   options=get_questions(password.user, option_work),
-                                   key='multiselect_questions')
                     
-                    if st.button('Responder'):
-                        for query in st.session_state['multiselect_questions']:
-                            pdf_inspector.user_questions(password.user, option_work, query)
-
-                elif st.session_state['radio_show_questions'] == 'Fazer Minhas Perguntas':
+                if st.session_state['radio_show_questions'] == 'Fazer Minhas Perguntas':
                     if query:=st.text_input("Digite sua pergunta:"):                          
                         pdf_inspector.user_questions(password.user, option_work, query)
+
+                # if st.session_state['radio_show_questions'] == 'Mostrar Histório':
+                #     show_all(password.user, option_work)
+                
+                elif st.session_state['radio_show_questions'] == 'Gerar Perguntas Prontas':
+                    get_questions(password.user, option_work)
+                    
                                                        
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
@@ -93,9 +88,9 @@ def main():
             
         elif option == "Identificar Riscos":   
             app_risks.app(password.user)
-        
-        elif option == "Concurso Público":
-            public_contest_app.app()
+
+        elif option == "Escrever Relatório":   
+            app_write_report.app('user')
 
 
 def show_all(user, work_key):
@@ -114,10 +109,14 @@ def show_all(user, work_key):
                                          work_key, 
                                          'response')
     
-    with open(os.path.join(response_folder, 'qa.txt'), 'r') as f:
-        qa = f.readlines()
-        for line in qa:
-            st.write(line)
+    # Verifica se existe o arquivo qa.txt
+    if not os.path.exists(os.path.join(response_folder, 'qa.txt')):
+        st.warning('Não há perguntas e respostas para mostrar. Faça perguntas.')
+    
+        with open(os.path.join(response_folder, 'qa.txt'), 'r') as f:
+            qa = f.readlines()
+            for line in qa:
+                st.write(line)
 
 def get_questions(user, work_key):
     """
@@ -135,12 +134,11 @@ def get_questions(user, work_key):
                                         work_key, 
                                         'response')
     
-    if not os.path.exists(os.path.join(response_folder, 'qa.json')):
-        pdf_inspector.generate_first_questions(password.user, work_key)
+    questions = pdf_inspector.generate_first_questions(password.user, work_key)  
     
-    with open(os.path.join(response_folder, 'qa.json'), 'r') as f:
-        qa = json.load(f)
-        questions = qa[0]['result'].split('\n')
+    # with open(os.path.join(response_folder, 'qa.json'), 'r') as f:
+    #     qa = json.load(f)
+    #     questions = qa[0]['result'].split('\n')
 
     return questions
 

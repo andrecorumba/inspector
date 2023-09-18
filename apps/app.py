@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # Import internal modules
-from apps import app_risks
+from apps import app_risks, app_write_report
 
 
 def main():
@@ -18,11 +18,13 @@ def main():
 
         option = option_menu("Inspector v.0.1.0",
                             options=["Página Inicial", 
-                                    "Identificar Riscos"],
+                                    "Identificar Riscos",
+                                    "Escrever Relatório"],
                             
                             # Icons from https://icons.getbootstrap.com/
                             icons=['house', 
-                                    "search"])   
+                                    "search",
+                                    "pencil-fill"])   
     if option == "Página Inicial":
         st.title("Página Inicial")
         st.markdown("""O **Inspector** é uma aplicação web, escrita em Python, 
@@ -30,6 +32,8 @@ def main():
                     """)   
     elif option == "Identificar Riscos":   
         app_risks.app('user')
+    elif option == "Escrever Relatório":   
+        app_write_report.app('user')
     
     
 if __name__ == '__main__':
