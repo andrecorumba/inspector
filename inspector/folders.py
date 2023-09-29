@@ -2,13 +2,13 @@ import os
 
 def create_folders(user_folder, work_key):
     """
-    Create folders for a new user.
+    Create folders necessary to works.
 
     Parameters:
     folder_user (str): Path to the user folder.
     """
 
-    # Cria a folder principal do usuário caso não exista.
+    # Create user folder if not exists
     if not os.path.exists(user_folder):
         os.makedirs(user_folder)
 

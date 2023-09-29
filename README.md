@@ -1,6 +1,6 @@
 # Inspector
 
-O **Inspector** é uma aplicação web, escrita em Python, que analisa vários tipos de documentos de forma mais eficiente. Ela se  utiliza o poder do modelo de linguagem GPT-3.5-turbo da OpenAI para fornecer respostas formais e precisas com base em perguntas feitas pelo usuário.
+O **Inspector** é uma Prova de Conceito (POC), contendo aplicação web e scripts, escritos em Python, que analisam vários tipos de documentos. Ela se  utiliza de modelos de linguagem GPT-3.5 e GPT-4 da OpenAI para fornecer respostas com base em perguntas feitas pelo usuário.
 
 ## Funcionalidades
 

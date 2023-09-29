@@ -30,13 +30,13 @@ def app(user: str = "user"):
                 with open(os.path.join(temporary_folder, uploaded.name),"wb") as f:
                     f.write(uploaded.getbuffer())
 
-
                 json_path = os.path.join(temporary_folder, uploaded.name)
-                
                 report = write_report.Report(path=json_path)
                 list_of_responses = []
+                
                 for context in report.context:
                     list_of_responses.append(report.llm_write_report(context))          
+                
                 st.success("Relatórios Processados com Sucesso! 🎉")
                 st.write(list_of_responses)
 

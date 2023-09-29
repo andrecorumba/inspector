@@ -33,6 +33,9 @@ class Report():
             self.load_from_json_file(path)
 
     def load_from_request_page(self, id):
+        '''Function to load the JSON content from the EAUD API.
+        This is a solution to e-aud system from CGU. https://eaud.cgu.gov.br/'''
+
         _ = load_dotenv(find_dotenv())
         self.eaud_api_key = os.environ['EAUD_API_KEY']
 
@@ -54,29 +57,33 @@ class Report():
             print(f"Failed to fetch data from API. Status code: {response.status_code}")
 
     def load_from_json_file(self, path):
-            self.path = path
-            try:
-                with open(path, "r", encoding="utf-8") as file:
-                    self.json_content = dict(json.load(file))
-                    
-                    for i in range(len(self.json_content["data"])):
-                        description = "Descrição Sumária: " + str(self.json_content["data"][i]["descricaoSumaria"])
-                        analysis = ''
+        '''Function to load the JSON content from a file.
+        The JSON file must be in the same format as the e-aud system.'''
 
-                        for j in range(len(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"])):
-                            test = "Teste de Auditoria: " + str(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"][j]["itemAnaliseAuditoria"]["teste"])
-                            scope = "Escopo da Auditoria: " + str(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"][j]["itemAnaliseAuditoria"]["escopos"])
-                            evidences = "Escopo da Auditoria: " + str(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"][j]["itemAnaliseAuditoria"]["evidencias"])
-                            analysis += test + scope + evidences
-                        self.context.append("Descrição Sumária: " + description + "\n" "Análise: " + analysis + "\n\n")
-                    
-            except FileNotFoundError:
-                print(f"File not found: {path}")
-            except Exception as e:
-                print(f"An error occurred while reading the JSON file: {e}")
+        self.path = path
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                self.json_content = dict(json.load(file))
+                
+                # Loop to get the context from the JSON file.
+                for i in range(len(self.json_content["data"])):
+                    description = "Descrição Sumária: " + str(self.json_content["data"][i]["descricaoSumaria"])
+                    analysis = ''
+
+                    for j in range(len(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"])):                        
+                        test = "Teste de Auditoria: " + str(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"][j]["itemAnaliseAuditoria"]["teste"])
+                        scope = "Escopo da Auditoria: " + str(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"][j]["itemAnaliseAuditoria"]["escopos"])
+                        evidences = "Escopo da Auditoria: " + str(self.json_content["data"][i]["analisesDoItemAchadoAuditoria"][j]["itemAnaliseAuditoria"]["evidencias"])
+                        analysis += test + scope + evidences
+                    self.context.append("Descrição Sumária: " + description + "\n" "Análise: " + analysis + "\n\n")             
+        except FileNotFoundError:
+            print(f"File not found: {path}")
+        except Exception as e:
+            print(f"An error occurred while reading the JSON file: {e}")
     
     def get_api_key(self, text_input_openai_api_key = 'openai'):
-        ''' Function to get the API key from the environment variable or from the text input. '''
+        '''Function to get OpenAI API key from the environment variable or from the text input.'''
+
         if text_input_openai_api_key == 'openai':
             _ = load_dotenv(find_dotenv())
             api_key = os.environ['OPENAI_API_KEY']
@@ -85,6 +92,8 @@ class Report():
         return api_key
     
     def llm_write_report(self, context):
+        '''Function to write the report using the LLM model.'''
+
         openai.api_key = self.get_api_key()
         llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k", 
                         openai_api_key=openai.api_key,
@@ -96,6 +105,8 @@ class Report():
 
 
 def main():
+    '''Main function to test the class.'''
+    
     report = Report(path="/Users/andreluiz/Downloads/inspector-examples/matriz-de-achados/response_1694810668864.json")
     # report = Report(id=1197908)
 
