@@ -3,8 +3,6 @@ import pytest
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from langchain.document_loaders.pdf import PyPDFLoader
-from langchain.document_loaders.pdf import PyPDFDirectoryLoader
 from inspector.chat_report import ChatAuditReport  # Import your ChatAuditReport class from the actual module
 
 # Define a test directory with sample PDFs for testing
