@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -9,18 +11,26 @@ from langchain.document_loaders.pdf import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores.chroma import Chroma
+from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import AzureChatOpenAI
+
+# Import internal modules
+import inspector.prompts as prompts
 
 
 class PyPDFInspectot():
     def __init__ (self):
         '''Initialize the ChatAuditReport class.'''
-
-        self.model_name = "gpt-3.5-turbo-16k"
+        self.model_name = "gpt-3.5-turbo-16k" # Change the model name if you want.
         self.documents = None
         self.docs_splited = None
         self.chunk_size = 4000
         self.embeddings = None
         self.vector_db = None
+        self.prompt = None
+        self.llm = None
+        self.temperature = 1.1
     
     def load_pdf_report_from_path(self, path_to_pdf_report: str):
         '''Load PDF report.'''
@@ -75,7 +85,33 @@ class PyPDFInspectot():
             collection_name="py_pdf_inspector_store"
             )
     
-
+    def openai_llm(self):
+        '''Create the OpenAI LLM.'''
+        self.llm = ChatOpenAI(
+            model="gpt-3.5-turbo-16k", 
+            temperature=self.temperature,
+            max_tokens=4052
+            )
+        
+    def azure_openai_llm(self):
+        '''Create Azure OpenAI LLM.'''
+        self.llm = AzureChatOpenAI(
+            model="gpt-3.5-turbo-16k", 
+            temperature=self.temperature,
+            openai_api_version='2023-05-15',
+            deployment_name='Teste-16k',
+            max_tokens=4052
+            )
+    
+    def retrieval_qa_chain(self):
+        '''Create the Retrieval QA chain.'''
+        qa_chain = RetrievalQA.from_chain_type(
+            llm=self.llm,
+            retriever=self.vector_db.as_retriever(),
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": self.prompt})
+        
+        
 
 
 if __name__ == "__main__":
@@ -83,22 +119,11 @@ if __name__ == "__main__":
 
     report = PyPDFInspectot()
     report.load_pdf_report_from_path("data/1497056.pdf")
-    print("report: ", len(report.documents))
-    print("Tamanho do documento na posição: ",len(report.documents[0].page_content))
-    print("DOCUMENT LOADED \n", report.documents[0])
-    print("\n\n")
-
-    # reports_in_folder = ChatAuditReport()
-    # reports_in_folder.load_pdf_folder("/Users/andreluiz/Downloads/inspector-examples/idenficar-riscos")
-    # print("reports_in_folder: ", len(reports_in_folder.documents))
-
     report.split_documents_from_tiktoken_encoder()
-    print("report splited: ", len(report.docs_splited))
-    print("Tamanho do split do documento na posição: ",len(report.docs_splited[0].page_content))
-    # print("DOCUMENT SPLITED \n", report.docs_splited)
-
     report.chroma_vector_db()
+    report.openai_llm()
+    report.prompt = prompts.USER_QUESTIONS_PROMPT
 
-    print("report vector_db: ")
+    print("report vector_db:", report.prompt)
 
 
