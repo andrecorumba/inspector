@@ -20,23 +20,28 @@ from langchain.prompts import PromptTemplate
 import inspector.prompts as prompts
 
 
-class PyPDFInspectot():
-    def __init__ (self):
+class PyPDFInspector():
+    def __init__ (
+            self, 
+            model_name = "gpt-3.5-turbo-16k",
+            temperature = 1.1,
+            chunk_size = 4000
+            ):
         '''Initialize the ChatAuditReport class.'''
-        self.model_name = "gpt-3.5-turbo-16k" # Change the model name if you want.
+        self.model_name = model_name 
         self.documents = None
         self.docs_splited = None
-        self.chunk_size = 4000
+        self.chunk_size = chunk_size
         self.embeddings = None
         self.vector_db = None
-        self.prompt = None # It's a prompt template object. from langchain.prompts import PromptTemplate
+        self.prompt = None
         self.llm = None
-        self.temperature = 1.1
-        self.reponse = None
-    
+        self.temperature = temperature
+        self.qa_chain = None
+        self.response = None
+
     def load_pdf_report_from_path(self, path_to_pdf_report: str):
         '''Load PDF report.'''
-        
         if os.path.isfile(path_to_pdf_report):
             loader = PyPDFLoader(path_to_pdf_report)
             self.documents = loader.load()
@@ -105,39 +110,60 @@ class PyPDFInspectot():
             max_tokens=4052
             )
     
-    def retrieval_qa_chain(self, query):
+    def load_prompt_template(self, prompt_template=None):
+        '''Load the prompt template.'''
+        if prompt_template == None:
+            prompt_template = """
+            A partir de trechos do documento pdf e responda a pergunta do usuário.
+            Contexto: {context}
+            Pergunta: {question}"""
+        self.prompt = PromptTemplate.from_template(prompt_template)
+        return self.prompt
+    
+    def retrieval_qa_chain(self):
         '''Create the Retrieval QA chain.'''
-        qa_chain = RetrievalQA.from_chain_type(
+        self.qa_chain = RetrievalQA.from_chain_type(
             llm=self.llm,
             retriever=self.vector_db.as_retriever(),
             return_source_documents=True,
             chain_type_kwargs={"prompt": self.prompt})
-        response = qa_chain({'query': query})
-        return response
+        return self.qa_chain
     
-    def pdf_inspector(self, file_path: str):
+    def inspector_qa_chains(self, query):
+        self.response = self.qa_chain({'query': query})
+        return self.response
+    
+    def run_pdf_inspector_from_folder(
+            self, 
+            file_path: str, 
+            model_name=None, 
+            temperature=None,
+            prompt_template=None
+            ):
         '''Run the PDF inspector.'''
-        self.load_pdf_report_from_path(file_path)
-        self.split_documents_from_tiktoken_encoder()
-        self.chroma_vector_db()
-        self.openai_llm()
-
-        prompt_template = """A partir de trechos do documento pdf e responda a pergunta do usuário.
-        Contexto: {context}
-        Pergunta: {question}"""
-
-        self.prompt = PromptTemplate.from_template(prompt_template)
-        self.reponse = self.retrieval_qa_chain("Qual a Unidade Auditada?")
-
-        return self.reponse
+        if model_name is not None:
+            self.model_name = model_name
+        if temperature is not None:
+            self.temperature = temperature
+        if prompt_template is not None:
+            self.prompt_template = temperature
+        try:
+            self.load_pdf_folder(file_path)
+            self.split_documents_from_tiktoken_encoder()
+            self.chroma_vector_db()
+            self.openai_llm()
+            self.load_prompt_template(prompt_template)
+            self.retrieval_qa_chain()
+        except Exception as e:
+            print(f"An error occurred during PDF inspection: {str(e)}")
         
-
-        
-
-
 if __name__ == "__main__":
-    '''Test the PyPDFInspector class.'''
-    report = PyPDFInspectot()
-    response = report.pdf_inspector("data/1497056.pdf")
+    '''Test the PyPDFInspector class.''' 
+    report = PyPDFInspector()
+    report.run_pdf_inspector_from_folder("data")
+
+    query = "Qual a Unidade Auditada?"
+    response  = report.inspector_qa_chains(query)
+    
     print("report vector_db:", response)
 
