@@ -14,6 +14,7 @@ from langchain.vectorstores.chroma import Chroma
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 from langchain.chat_models import AzureChatOpenAI
+from langchain.prompts import PromptTemplate
 
 # Import internal modules
 import inspector.prompts as prompts
@@ -28,9 +29,10 @@ class PyPDFInspectot():
         self.chunk_size = 4000
         self.embeddings = None
         self.vector_db = None
-        self.prompt = None
+        self.prompt = None # It's a prompt template object. from langchain.prompts import PromptTemplate
         self.llm = None
         self.temperature = 1.1
+        self.reponse = None
     
     def load_pdf_report_from_path(self, path_to_pdf_report: str):
         '''Load PDF report.'''
@@ -103,27 +105,39 @@ class PyPDFInspectot():
             max_tokens=4052
             )
     
-    def retrieval_qa_chain(self):
+    def retrieval_qa_chain(self, query):
         '''Create the Retrieval QA chain.'''
         qa_chain = RetrievalQA.from_chain_type(
             llm=self.llm,
             retriever=self.vector_db.as_retriever(),
             return_source_documents=True,
             chain_type_kwargs={"prompt": self.prompt})
+        response = qa_chain({'query': query})
+        return response
+    
+    def pdf_inspector(self, file_path: str):
+        '''Run the PDF inspector.'''
+        self.load_pdf_report_from_path(file_path)
+        self.split_documents_from_tiktoken_encoder()
+        self.chroma_vector_db()
+        self.openai_llm()
+
+        prompt_template = """A partir de trechos do documento pdf e responda a pergunta do usuário.
+        Contexto: {context}
+        Pergunta: {question}"""
+
+        self.prompt = PromptTemplate.from_template(prompt_template)
+        self.reponse = self.retrieval_qa_chain("Qual a Unidade Auditada?")
+
+        return self.reponse
         
+
         
 
 
 if __name__ == "__main__":
-    '''Test the ChatAuditReport class.'''
-
+    '''Test the PyPDFInspector class.'''
     report = PyPDFInspectot()
-    report.load_pdf_report_from_path("data/1497056.pdf")
-    report.split_documents_from_tiktoken_encoder()
-    report.chroma_vector_db()
-    report.openai_llm()
-    report.prompt = prompts.USER_QUESTIONS_PROMPT
-
-    print("report vector_db:", report.prompt)
-
+    response = report.pdf_inspector("data/1497056.pdf")
+    print("report vector_db:", response)
 
