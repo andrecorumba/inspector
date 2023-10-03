@@ -4,18 +4,16 @@ import os
 
 from inspector import folders, password, work_key
 
+from inspector.py_pdf_inspector import PyPDFInspector
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-def upload_files(type, type_of_work: str, user) -> str:
-    """
-    Function to upload files to the user folder.
 
-    Parameters:
-    type (list): List of file types.
-
-    Return:
-    work_key (str): Work key.
-    """
+def upload_files(
+        type: list[str],
+        type_of_work: str = 'report', 
+        user: str = 'user') -> str:
+    """Function to upload files to the user folder."""
 
     st.file_uploader('Selecione os arquivos para análise', 
                      type=type,
@@ -30,15 +28,19 @@ def upload_files(type, type_of_work: str, user) -> str:
                                         user)
             key = work_key.create_key(type_of_work)
             folders.create_folders(user_folder, key)
-            files_folder = folders.get_folder(user, 
-                                              key, 
-                                              'upload')
+            files_folder = folders.get_folder(
+                user, 
+                key, 
+                'upload')
                         
             for file in st.session_state['uploaded_file_list']:
                 with open(os.path.join(files_folder, file.name),"wb") as f:
                     f.write((file).getbuffer())
             
             files_lenght = len(os.listdir(files_folder))
+
+            report = PyPDFInspector()
+            report.run_pdf_inspector_from_folder(file_path=os.path.join(user_folder,key))
             st.success(f"Arquivos Carregados: {files_lenght}. Código do trabalho: {key}")
     
             return key

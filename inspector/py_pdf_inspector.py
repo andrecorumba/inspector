@@ -83,21 +83,27 @@ class PyPDFInspector():
             chunk_size=self.chunk_size
             )
 
-    def chroma_vector_db(self):
+    def chroma_vector_db(
+            self,
+            persistent_path: str = "temporary",
+            ):
         '''Create the Chroma vector database.'''
         self.create_openai_embeddings()
         self.vector_db = Chroma.from_documents(
             documents=self.docs_splited,
             embedding=self.embeddings,
-            collection_name="py_pdf_inspector_store"
+            collection_name="py_pdf_inspector_store",
+            persist_directory=persistent_path,
             )
+        self.vector_db.persist()
+        
     
     def openai_llm(self):
         '''Create the OpenAI LLM.'''
         self.llm = ChatOpenAI(
             model="gpt-3.5-turbo-16k", 
             temperature=self.temperature,
-            max_tokens=4052
+            max_tokens=4052,
             )
         
     def azure_openai_llm(self):
@@ -107,16 +113,20 @@ class PyPDFInspector():
             temperature=self.temperature,
             openai_api_version='2023-05-15',
             deployment_name='Teste-16k',
-            max_tokens=4052
+            max_tokens=4052,
             )
     
     def load_prompt_template(self, prompt_template=None):
         '''Load the prompt template.'''
         if prompt_template == None:
             prompt_template = """
-            A partir de trechos do documento pdf e responda a pergunta do usuário.
+            A partir de trechos de documentos constantes do contexto a seguir e responda a pergunta do usuário.
             Contexto: {context}
-            Pergunta: {question}"""
+            Pergunta: {question}
+            A resposta deve ser clara, direta e formal em português, seguindo o conteúdo do contexto.
+            Você deverá responder apenas se houver uma resposta no contexto acima, caso contrário escreva apenas: 
+            "Não consegui encontrar a resposta nos documentos fornecidos."
+            """
         self.prompt = PromptTemplate.from_template(prompt_template)
         return self.prompt
     
@@ -150,12 +160,32 @@ class PyPDFInspector():
         try:
             self.load_pdf_folder(file_path)
             self.split_documents_from_tiktoken_encoder()
-            self.chroma_vector_db()
+            self.chroma_vector_db(persistent_path=file_path)
             self.openai_llm()
             self.load_prompt_template(prompt_template)
             self.retrieval_qa_chain()
         except Exception as e:
             print(f"An error occurred during PDF inspection: {str(e)}")
+    
+    def load_persistent_chroma_vector_db_and_retrieval(
+            self, 
+            file_path: str, 
+            prompt_template=None
+            ):
+        '''Load the persistent Chroma vector database.'''
+        try:
+            self.create_openai_embeddings()
+            self.vector_db = Chroma(
+                collection_name="py_pdf_inspector_store",
+                persist_directory=file_path, 
+                embedding_function=self.embeddings,
+                )
+            self.openai_llm()
+            self.load_prompt_template(prompt_template)
+            self.retrieval_qa_chain()
+        except Exception as e:
+            print(f"An error occurred during PDF inspection: {str(e)}")
+
         
 if __name__ == "__main__":
     '''Test the PyPDFInspector class.''' 
