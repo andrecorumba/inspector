@@ -80,12 +80,13 @@ class PyPDFInspector():
         self.load_openai_enviroment()
         self.embeddings = OpenAIEmbeddings(
             openai_api_key=openai.api_key,
-            chunk_size=self.chunk_size
+            chunk_size=self.chunk_size,
+            max_retries=3,
             )
 
     def chroma_vector_db(
             self,
-            persistent_path: str = "temporary",
+            persistent_folder: str,
             ):
         '''Create the Chroma vector database.'''
         self.create_openai_embeddings()
@@ -93,11 +94,10 @@ class PyPDFInspector():
             documents=self.docs_splited,
             embedding=self.embeddings,
             collection_name="py_pdf_inspector_store",
-            persist_directory=persistent_path,
+            persist_directory=persistent_folder,
             )
         self.vector_db.persist()
         
-    
     def openai_llm(self):
         '''Create the OpenAI LLM.'''
         self.llm = ChatOpenAI(
@@ -134,9 +134,10 @@ class PyPDFInspector():
         '''Create the Retrieval QA chain.'''
         self.qa_chain = RetrievalQA.from_chain_type(
             llm=self.llm,
-            retriever=self.vector_db.as_retriever(),
+            retriever=self.vector_db.as_retriever(search_kwargs={"k": 1}),
             return_source_documents=True,
-            chain_type_kwargs={"prompt": self.prompt})
+            chain_type_kwargs={"prompt": self.prompt},
+            )
         return self.qa_chain
     
     def inspector_qa_chains(self, query):
@@ -146,9 +147,10 @@ class PyPDFInspector():
     def run_pdf_inspector_from_folder(
             self, 
             file_path: str, 
+            persistent_folder: str,
             model_name=None, 
             temperature=None,
-            prompt_template=None
+            prompt_template=None,
             ):
         '''Run the PDF inspector.'''
         if model_name is not None:
@@ -158,9 +160,9 @@ class PyPDFInspector():
         if prompt_template is not None:
             self.prompt_template = temperature
         try:
-            self.load_pdf_folder(file_path)
+            self.load_pdf_folder(path_to_pdf_report=file_path)
             self.split_documents_from_tiktoken_encoder()
-            self.chroma_vector_db(persistent_path=file_path)
+            self.chroma_vector_db(persistent_folder=persistent_folder)
             self.openai_llm()
             self.load_prompt_template(prompt_template)
             self.retrieval_qa_chain()
@@ -169,15 +171,15 @@ class PyPDFInspector():
     
     def load_persistent_chroma_vector_db_and_retrieval(
             self, 
-            file_path: str, 
-            prompt_template=None
+            persistent_folder: str,
+            prompt_template=None,
             ):
         '''Load the persistent Chroma vector database.'''
         try:
             self.create_openai_embeddings()
             self.vector_db = Chroma(
                 collection_name="py_pdf_inspector_store",
-                persist_directory=file_path, 
+                persist_directory=persistent_folder, 
                 embedding_function=self.embeddings,
                 )
             self.openai_llm()
@@ -190,7 +192,7 @@ class PyPDFInspector():
 if __name__ == "__main__":
     '''Test the PyPDFInspector class.''' 
     report = PyPDFInspector()
-    report.run_pdf_inspector_from_folder("data")
+    report.run_pdf_inspector_from_folder(file_path="data")
 
     query = "Qual a Unidade Auditada?"
     response  = report.inspector_qa_chains(query)

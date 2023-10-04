@@ -21,7 +21,7 @@
             "justMyCode": true,
             "args": [
                 "run",
-                "apps/app_py_pdf_inspector.py"
+                "apps/app.py"
             ]
         }
     ]
