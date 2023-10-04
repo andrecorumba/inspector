@@ -7,21 +7,14 @@ from inspector import folders, risks
 from apps import app_upload_files
 
 def app(user):
-    """ Main function for the Risks App.
-    
-    Parameters:
-    user (str): User name.
-    
-    Return:
-    None
-    """
+    """ Main function for the Risks App."""
     st.text_input("OpenAI API Key", key="openai_api_key", type="password")
     st.markdown("[Obtenha uma OpenAI API key](https://platform.openai.com/account/api-keys)")
     
     if st.session_state['openai_api_key'] != "":
         # get OpenAI API Key
         risks.get_api_key(st.session_state['openai_api_key'])
-        
+    
         # get work key
         work_key = app_upload_files.upload_files(type=['pdf'], type_of_work='riscos', user=user)
         
@@ -31,10 +24,10 @@ def app(user):
             # call risk identifier
             with st.spinner("Identificando Riscos .... 💫"):                  
                 (response_risk_refined_mode, 
-                 cb, 
-                 zip_file) = risks.risk_identifier_individual_file(user, 
-                                                                   work_key, 
-                                                                   st.session_state['openai_api_key'])
+                    cb, 
+                    zip_file) = risks.risk_identifier_individual_file(user, 
+                                                                    work_key, 
+                                                                    st.session_state['openai_api_key'])
             st.success("Riscos identificados com sucesso! 🎉")
 
             # dowload response files

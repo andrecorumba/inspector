@@ -39,6 +39,8 @@ def app(user):
     if st.session_state['radio_show_questions'] == 'Fazer Minhas Perguntas':
         if query:=st.text_input("Digite sua pergunta:"):  
             report = PyPDFInspector()
+            
+            report.prompt = prompts.USER_QUESTIONS_PROMPT
             report.load_persistent_chroma_vector_db_and_retrieval(
                 persistent_folder=os.path.join(
                     user_folder,
@@ -46,9 +48,23 @@ def app(user):
                     'vectordb',
                     ),
                 )    
-            report.prompt = prompts.USER_QUESTIONS_PROMPT
             report.inspector_qa_chains(query=query)
             st.write(report.response)
+    
+    elif st.session_state['radio_show_questions'] == 'Gerar Perguntas Prontas':
+            first_questions = PyPDFInspector(
+                 temperature=0.3
+                 )
+            first_questions.prompt = prompts.FIRST_QUESTIONS_PROMPT
+            first_questions.load_persistent_chroma_vector_db_and_retrieval(
+                persistent_folder=os.path.join(
+                    user_folder,
+                    option_work, 
+                    'vectordb',
+                    ),
+                )    
+            first_questions.inspector_qa_chains(query=' ')
+            st.write(first_questions.response)
 
 
 if __name__ == "__main__":

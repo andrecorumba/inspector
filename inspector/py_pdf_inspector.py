@@ -24,8 +24,8 @@ class PyPDFInspector():
     def __init__ (
             self, 
             model_name = "gpt-3.5-turbo-16k",
-            temperature = 1.1,
-            chunk_size = 4000
+            temperature = 0,
+            chunk_size = 4000,
             ):
         '''Initialize the ChatAuditReport class.'''
         self.model_name = model_name 
@@ -39,6 +39,7 @@ class PyPDFInspector():
         self.temperature = temperature
         self.qa_chain = None
         self.response = None
+        
 
     def load_pdf_report_from_path(self, path_to_pdf_report: str):
         '''Load PDF report.'''
@@ -150,21 +151,17 @@ class PyPDFInspector():
             persistent_folder: str,
             model_name=None, 
             temperature=None,
-            prompt_template=None,
             ):
         '''Run the PDF inspector.'''
         if model_name is not None:
             self.model_name = model_name
         if temperature is not None:
             self.temperature = temperature
-        if prompt_template is not None:
-            self.prompt_template = temperature
         try:
             self.load_pdf_folder(path_to_pdf_report=file_path)
             self.split_documents_from_tiktoken_encoder()
             self.chroma_vector_db(persistent_folder=persistent_folder)
             self.openai_llm()
-            self.load_prompt_template(prompt_template)
             self.retrieval_qa_chain()
         except Exception as e:
             print(f"An error occurred during PDF inspection: {str(e)}")
@@ -172,7 +169,6 @@ class PyPDFInspector():
     def load_persistent_chroma_vector_db_and_retrieval(
             self, 
             persistent_folder: str,
-            prompt_template=None,
             ):
         '''Load the persistent Chroma vector database.'''
         try:
@@ -183,7 +179,6 @@ class PyPDFInspector():
                 embedding_function=self.embeddings,
                 )
             self.openai_llm()
-            self.load_prompt_template(prompt_template)
             self.retrieval_qa_chain()
         except Exception as e:
             print(f"An error occurred during PDF inspection: {str(e)}")
