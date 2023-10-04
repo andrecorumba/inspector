@@ -10,7 +10,9 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from inspector.py_pdf_inspector import PyPDFInspector
 
-from inspector import folders
+from inspector import (
+    folders,
+    prompts)
 
 def app(user):
     user_work_list = []
@@ -40,6 +42,7 @@ def app(user):
             report.load_persistent_chroma_vector_db_and_retrieval(
                 file_path=os.path.join(user_folder,option_work)
                 )    
+            report.prompt = prompts.USER_QUESTIONS_PROMPT
             report.inspector_qa_chains(query=query)
             st.write(report.response)
 
