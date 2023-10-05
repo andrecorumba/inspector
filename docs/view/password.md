@@ -1,6 +1,6 @@
 # Password
 
-::: inspector.password
+::: view.password
 
 ## Descrição do Código
 Este código em Python utiliza a biblioteca Streamlit para criar uma interface de usuário interativa que solicita ao usuário um nome de usuário e uma senha. O objetivo é verificar se o usuário forneceu a senha correta associada ao nome de usuário. O código utiliza o conceito de "session_state" para armazenar temporariamente informações entre diferentes interações do usuário com a aplicação.

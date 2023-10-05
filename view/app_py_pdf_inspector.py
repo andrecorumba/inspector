@@ -15,6 +15,7 @@ from controller import (
     prompts)
 
 def app(user):
+    '''App for PDF Inspector'''
     user_work_list = []
     user_folder = folders.get_folder(
             user=user,

@@ -1,3 +1,0 @@
-# Analisar
-
-::: inspector.analisar

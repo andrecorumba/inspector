@@ -1,3 +1,0 @@
-# Documentos
-
-::: inspector.documentos

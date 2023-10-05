@@ -3,10 +3,8 @@ import streamlit as st
 user = ''
 
 def check_password():
-    """
-    Retorna `True` se o usuário inseriu o password correto.
-
-    Código original disponível em:
+    """Return `True` if the user entered the correct password, otherwise `False`.
+    Original code from:
     https://docs.streamlit.io/knowledge-base/deploy/authentication-without-sso
     """
 

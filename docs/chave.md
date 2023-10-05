@@ -1,3 +1,0 @@
-# Chave
-
-::: inspector.chave
