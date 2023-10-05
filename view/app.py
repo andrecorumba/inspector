@@ -13,10 +13,10 @@ from view import (
     )
 
 
-def main():
+def main(user='user'):
     """ Main function for the Inspector App. """
     with st.sidebar:
-        st.write("Usuário da sessão:", 'user')
+        st.write("Usuário da sessão:", user)
         option = option_menu("Inspector v.0.1.1",
                             options=["Página Inicial", 
                                      "Carregar Documentos",
@@ -34,9 +34,9 @@ def main():
                     que analisa e interage com vários tipos de documentos.
                     """)   
     elif option == "Carregar Documentos":   
-        app_upload_files.upload_files(type=['pdf'])
+        app_upload_files.upload_files(type=['pdf'], user=user)
     elif option == "Interagir com Documentos":   
-        app_py_pdf_inspector.app('user')
+        app_py_pdf_inspector.app(user)
     
 if __name__ == '__main__':
     main()
