@@ -17,7 +17,7 @@ from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 
 # Import internal modules
-import inspector.prompts as prompts
+import controller.prompts as prompts
 
 
 class PyPDFInspector():

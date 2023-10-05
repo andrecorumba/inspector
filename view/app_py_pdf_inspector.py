@@ -8,9 +8,9 @@ from streamlit_option_menu import option_menu
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from inspector.py_pdf_inspector import PyPDFInspector
+from model.py_pdf_inspector import PyPDFInspector
 
-from inspector import (
+from controller import (
     folders,
     prompts)
 

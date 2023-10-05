@@ -9,9 +9,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import json
 
 # Import internal modules
-from inspector import password, folders, pdf_inspector
-
-from apps import public_contest_app, app_risks, app_upload_files, app_write_report
+from controller import folders
+from view import app_upload_files, password
 
 
 def main():

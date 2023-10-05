@@ -2,9 +2,8 @@ import streamlit as st
 import sys
 import os
 
-from inspector import folders, password, work_key
-
-from inspector.py_pdf_inspector import PyPDFInspector
+from controller import folders, work_key
+from model.py_pdf_inspector import PyPDFInspector
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 

@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # Import internal modules
-from apps import (
+from view import (
     app_upload_files, 
     app_py_pdf_inspector
     )
