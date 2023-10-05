@@ -121,12 +121,12 @@ class PyPDFInspector():
         '''Load the prompt template.'''
         if prompt_template == None:
             prompt_template = """
-            A partir de trechos de documentos constantes do contexto a seguir e responda a pergunta do usuário.
-            Contexto: {context}
-            Pergunta: {question}
-            A resposta deve ser clara, direta e formal em português, seguindo o conteúdo do contexto.
-            Você deverá responder apenas se houver uma resposta no contexto acima, caso contrário escreva apenas: 
-            "Não consegui encontrar a resposta nos documentos fornecidos."
+            Using excerpts from documents contained in the context below, answer the user's question.
+            Context: {context}
+            Question: {question}
+            The answer must be clear, direct and formal in English, following the content of the context.
+            You should only respond if there is an answer in the context above, otherwise just write:
+            'I was unable to find the answer in the documents provided.'
             """
         self.prompt = PromptTemplate.from_template(prompt_template)
         return self.prompt

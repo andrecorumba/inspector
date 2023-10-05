@@ -8,8 +8,6 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # Import internal modules
 from apps import (
-    app_risks, 
-    app_write_report, 
     app_upload_files, 
     app_py_pdf_inspector
     )
@@ -23,14 +21,12 @@ def main():
                             options=["Página Inicial", 
                                      "Carregar Documentos",
                                      "Interagir com Documentos",
-                                     "Identificar Riscos",
-                                     "Escrever Relatório"],                    
+                                     ],                    
                             # Icons from https://icons.getbootstrap.com/
                             icons=["house", 
                                    "archive",
                                    "chat-dots",
-                                   "search",
-                                   "pencil-fill"]
+                                   ]
                                    )   
     if option == "Página Inicial":
         st.title("Página Inicial")
@@ -41,11 +37,6 @@ def main():
         app_upload_files.upload_files(type=['pdf'])
     elif option == "Interagir com Documentos":   
         app_py_pdf_inspector.app('user')
-    elif option == "Identificar Riscos":   
-        app_risks.app('user')
-    elif option == "Escrever Relatório":   
-        app_write_report.app('user')
-
     
 if __name__ == '__main__':
     main()

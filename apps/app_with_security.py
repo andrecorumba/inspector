@@ -26,15 +26,13 @@ def main():
                                 options=["Página Inicial", 
                                         "Carregar Documentos", 
                                         "Analisar Documentos",
-                                        "Identificar Riscos",
-                                        "Escrever Relatório"],
+                                        ],
                                 
                                 # Icons from https://icons.getbootstrap.com/
                                 icons=['house', 
                                        "filetype-pdf",
                                        "search",
-                                       "activity",
-                                       "pencil-fill"])   
+                                       ])   
             
         if option == "Página Inicial":
             st.title("Página Inicial")
@@ -85,12 +83,6 @@ def main():
             except FileNotFoundError:
                 st.warning('Não há trabalhos para analisar. Por favor, carregue documentos.')
                 return
-            
-        elif option == "Identificar Riscos":   
-            app_risks.app(password.user)
-
-        elif option == "Escrever Relatório":   
-            app_write_report.app('user')
 
 
 def show_all(user, work_key):

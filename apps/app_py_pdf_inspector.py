@@ -40,7 +40,7 @@ def app(user):
         if query:=st.text_input("Digite sua pergunta:"):  
             report = PyPDFInspector()
             
-            report.prompt = prompts.USER_QUESTIONS_PROMPT
+            report.prompt = prompts.PORTUGUESE_BASIC_PROMPT
             report.load_persistent_chroma_vector_db_and_retrieval(
                 persistent_folder=os.path.join(
                     user_folder,
@@ -55,7 +55,7 @@ def app(user):
             first_questions = PyPDFInspector(
                  temperature=0.3
                  )
-            first_questions.prompt = prompts.FIRST_QUESTIONS_PROMPT
+            first_questions.prompt = prompts.FIRST_QUESTIONS_PORTUGUESE_PROMPT
             first_questions.load_persistent_chroma_vector_db_and_retrieval(
                 persistent_folder=os.path.join(
                     user_folder,
