@@ -6,8 +6,6 @@ O **Inspector** é uma Prova de Conceito (POC), contendo aplicação web e scrip
 
 - Carregar Documentos: Permite ao usuário fazer o upload de arquivos PDF para análise.
 - Analisar Documentos: Utiliza o LangChain e o modelo GPT-3.5-turbo para analisar documentos PDF e responder perguntas.
-- Identificar Riscos: Opção para identificar riscos em relatórios de auditoria
-- Concurso Público: Permite analisar editais de concurso público.
 
 ## Documentação
 
@@ -20,6 +18,24 @@ https://andrecorumba.github.io/inspector/
 Uma PoC para identificar riscos está disponível em:
 
 http://inspector.streamlit.app/
+
+## Estrutura de Diretórios
+
+O projeto possui uma estrutura de diretórios que inclui as seguintes pastas:
+- **model:** Nesta pasta, estão arquivos Python relacionados à modelagem ou manipulação de dados.
+- **view:** A pasta "view" contém arquivos Python relacionados à interface do usuário.
+- **controller:** Nesta pasta, encontram-se arquivos Python relacionados à lógica de controle da aplicação.
+- **tests:** A pasta "tests" contém scripts de teste para a aplicação.
+- **docs:** A pasta "docs" contém documentação do projeto.
+
+## Arquivos de Configuração
+
+- **.vscode:** Esta pasta contém configurações e arquivos relacionados ao Visual Studio Code.
+- **.gitignore:** O arquivo ".gitignore" especifica quais arquivos e diretórios devem ser ignorados pelo Git durante o versionamento do código-fonte.
+- **LICENSE:** O arquivo "LICENSE" contém informações sobre a licença do projeto.
+- **README.md:** O arquivo "README.md" contém essas instruções.
+- **mkdocs.yml:** Arquivo de configuração usado para gerar documentação utilizando a ferramenta MkDocs.
+- **poetry.lock** e **pyproject.toml:** Esses arquivos estão relacionados à gestão de dependências e configuração do ambiente Python usando a ferramenta Poetry.
 
 ## Pré-requisitos
 
@@ -35,10 +51,14 @@ Você pode instalar as bibliotecas usando o gerenciador de pacotes `pip`. Por ex
 
 ```
 pip install streamlit
-pip install streamlit_option_menu
-pip install openai
-pip install dotenv
+pip install streamlit-option-menu
 pip install langchain
+pip install openai
+pip install python-dotenv
+pip install pypdf
+pip install tiktoken
+pip install chromadb
+pip install watchdog
 ```
 
 ## Como Executar o Projeto
@@ -72,7 +92,12 @@ bob_bar = "mycrazypw"
 5. Execute o aplicativo com Streamlit:
 
 ```
-streamlit run app_with_security.py
+streamlit run view/app_with_security.py
+```
+
+ou para app sem uso de senha digite:
+```
+streamlit run view/app.py
 ```
 
 6. O aplicativo será executado em seu navegador padrão. Você pode acessá-lo em `http://localhost:8501`.
@@ -81,7 +106,7 @@ streamlit run app_with_security.py
 
 1. Ao iniciar o aplicativo, será solicitado que você insira seu nome de usuário e senha. Digite suas credenciais corretas para acessar as funcionalidades do aplicativo.
 
-2. Na barra lateral esquerda, você encontrará as diferentes opções disponíveis: "Home", "Carregar Documentos", "Analisar Documentos", "Elaborar Matriz de Planejamento", "Analisar Conversas Whatsapp" e "Escrever Relatórios".
+2. Na barra lateral esquerda, você encontrará as diferentes opções disponíveis: "Home", "Carregar Documentos", etc.
 
 3. Selecione a opção desejada e siga as instruções para utilizar cada funcionalidade do aplicativo.
 
@@ -109,9 +134,9 @@ O arquivo `app.py` contém a função principal do projeto chamada `main()`. Ess
 
 A função `main()` é executada quando o arquivo `app.py` é executado diretamente. Ela verifica se a senha do usuário é correta usando a função `password.check_password()`. Em seguida, dependendo da opção selecionada pelo usuário no menu lateral, ele é redirecionado para a página correspondente.
 
-### `pdf_inspector.py`
+### `py_pdf_inspector.py`
 
-O arquivo `pdf_inspector.py` contém a função `analisador_arquivos_pdf(usuario)`, que é responsável por analisar arquivos PDF. A função recebe o nome do usuário como entrada e permite que o usuário faça upload de arquivos PDF para análise.
+O arquivo `py_pdf_inspector.py` contém a classe `PyPDFInspector`, que é responsável por analisar arquivos PDF.
 
 ### `password.py`
 
@@ -121,17 +146,11 @@ O arquivo `password.py` contém a função `check_password()`, que é responsáv
 
 O arquivo `folders.py` contém a função `create_folders(user_folder, work_key)`, que é responsável por criar as pastas necessárias para o funcionamento do aplicativo. Ela recebe o caminho da pasta principal do usuário e uma chave aleatória como entrada e cria as pastas relacionadas ao trabalho do usuário.
 
-### `risks.py`
-
-O arquivo `risks.py` contém a função `risk_identifier_individual_file(user, work_key, text_input_openai_api_key)`, que é responsável por identificar riscos em relatórios de auditoria a partir de um prompt e do uso da biblioteca LangChain e OpenAI.
-
 ### `work_key.py`
 
 O arquivo `work_key.py` contém a função `create_key(type_of_work)`, que é responsável por criar uma chave aleatória para identificar o caso de uso do app.
 
-### `public_contest.py`
-
-Ainda em construção.
+Outras funcionalidades ainda em construção.
 
 ## Bibliotecas usadas:
 
