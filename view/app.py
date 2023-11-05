@@ -37,6 +37,7 @@ def main(user='user'):
         app_upload_files.upload_files(type=['pdf'], user=user)
     elif option == "Interagir com Documentos":   
         app_py_pdf_inspector.app(user)
-    
+
+# Run the app
 if __name__ == '__main__':
     main()
