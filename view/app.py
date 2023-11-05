@@ -12,7 +12,7 @@ from view import (
     app_py_pdf_inspector
     )
 
-
+# Main function for the Inspector App
 def main(user='user'):
     """ Main function for the Inspector App. """
     with st.sidebar:
