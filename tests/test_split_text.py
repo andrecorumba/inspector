@@ -1,10 +1,6 @@
 from model.split_text import SplitText
 
 
-# TEXT_EXAMPLE = """
-# The future of artificial intelligence (AI) is rapidly evolving, with advancements in machine learning, deep learning, and natural language processing (NLP) making it an integral part of various industries. As AI technologies continue to improve, they are revolutionizing the way we interact with machines, automate tasks, and solve complex problems. The impact of AI can be seen across a wide range of sectors, including healthcare, finance, education, and even entertainment.
-# """
-
 TEXT_EXAMPLE = """
 The future of artificial intelligence (AI) is rapidly evolving, with advancements in machine learning, deep learning, and natural language processing (NLP) making it an integral part of various industries. As AI technologies continue to improve, they are revolutionizing the way we interact with machines, automate tasks, and solve complex problems. The impact of AI can be seen across a wide range of sectors, including healthcare, finance, education, and even entertainment.
 
