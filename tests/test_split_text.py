@@ -1,0 +1,39 @@
+from model.split_text import SplitText
+
+
+# TEXT_EXAMPLE = """
+# The future of artificial intelligence (AI) is rapidly evolving, with advancements in machine learning, deep learning, and natural language processing (NLP) making it an integral part of various industries. As AI technologies continue to improve, they are revolutionizing the way we interact with machines, automate tasks, and solve complex problems. The impact of AI can be seen across a wide range of sectors, including healthcare, finance, education, and even entertainment.
+# """
+
+TEXT_EXAMPLE = """
+The future of artificial intelligence (AI) is rapidly evolving, with advancements in machine learning, deep learning, and natural language processing (NLP) making it an integral part of various industries. As AI technologies continue to improve, they are revolutionizing the way we interact with machines, automate tasks, and solve complex problems. The impact of AI can be seen across a wide range of sectors, including healthcare, finance, education, and even entertainment.
+
+One of the most exciting aspects of AI is its ability to enhance decision-making processes. In the past, human decision-making was often limited by cognitive biases and the availability of relevant data. However, with AI, decision-making has become more data-driven and efficient. Machine learning algorithms are capable of analyzing vast amounts of data and identifying patterns that would be difficult or impossible for humans to detect. This has led to breakthroughs in fields such as medicine, where AI-powered diagnostic tools can detect diseases earlier and more accurately than traditional methods.
+
+Another area where AI is making a significant impact is in automation. Automation has been a key driver of productivity improvements in industries such as manufacturing and logistics. AI-powered robots and autonomous systems are increasingly being used to perform repetitive tasks, freeing up human workers to focus on more complex and creative activities. This shift has the potential to revolutionize the workforce, as AI can perform tasks more efficiently and consistently than humans, leading to cost savings and increased output.
+In addition to its practical applications, AI is also raising important ethical questions. As AI systems become more autonomous, there are concerns about their impact on privacy, security, and employment. The potential for AI to make decisions without human oversight has led to fears about the loss of control and accountability. For example, in the criminal justice system, AI algorithms are being used to predict recidivism rates and inform sentencing decisions. However, there are concerns that these systems may perpetuate biases and lead to unfair outcomes.
+To address these concerns, many researchers and organizations are working on developing ethical guidelines for the development and use of AI. These guidelines aim to ensure that AI is developed in a way that aligns with societal values and that its use does not harm individuals or communities. Some of the key principles that are being emphasized include transparency, fairness, accountability, and privacy protection. Ensuring that AI systems are transparent means that their decision-making processes can be understood and audited by humans. Fairness involves ensuring that AI systems do not discriminate against certain groups of people based on characteristics such as race, gender, or socioeconomic status. Accountability ensures that there is a clear mechanism for holding AI systems accountable for their actions, and privacy protection aims to safeguard individuals’ personal data from misuse.
+Despite the challenges and risks associated with AI, there is no doubt that it has the potential to transform our world in profound ways. As AI continues to evolve, it will likely become more integrated into our daily lives, from virtual assistants to self-driving cars. The key to unlocking the full potential of AI lies in balancing innovation with ethical considerations. By ensuring that AI is developed and deployed responsibly, we can harness its power to improve our lives while mitigating its risks.
+In the coming years, AI is expected to play an increasingly important role in shaping the global economy. As industries become more automated and data-driven, businesses that are able to leverage AI effectively will have a competitive advantage. The demand for AI-related skills is also expected to rise, with many organizations seeking to hire data scientists, machine learning engineers, and AI specialists. This shift in the job market will require workers to adapt to new technologies and develop the skills necessary to work alongside AI systems.
+For governments and policymakers, the rise of AI presents both opportunities and challenges. On the one hand, AI can be used to improve public services, enhance national security, and drive economic growth. On the other hand, governments must ensure that the use of AI does not exacerbate inequality or infringe on people’s rights. To achieve this, governments will need to work closely with researchers, businesses, and civil society organizations to develop policies that promote the responsible use of AI.
+One of the most promising applications of AI is in healthcare. AI technologies are already being used to develop more personalized treatment plans, predict disease outbreaks, and improve drug discovery. For example, AI-powered algorithms can analyze medical images to detect early signs of diseases such as cancer, enabling doctors to intervene at an earlier stage. In addition, AI is being used to develop new therapies and treatments, including precision medicine, which tailors treatments to an individual’s genetic makeup.
+AI is also being used to improve healthcare delivery in underserved areas. By leveraging AI-powered telemedicine platforms, healthcare providers can offer remote consultations and diagnostics to patients in rural or isolated regions. This has the potential to improve access to healthcare and reduce disparities in health outcomes. Moreover, AI can help streamline administrative tasks, such as scheduling and billing, allowing healthcare providers to focus more on patient care.
+As AI continues to evolve, it is likely that its applications will expand even further. From enhancing climate change models to revolutionizing education, the possibilities for AI are vast. However, it is important to recognize that the development of AI is not without its challenges. Ethical considerations, regulatory frameworks, and the need for responsible innovation will continue to shape the future of AI. As we move forward, it is essential to strike a balance between harnessing the power of AI and addressing its potential risks.
+In conclusion, artificial intelligence is poised to revolutionize various aspects of our society, from healthcare to education to business. While there are challenges to overcome, including ethical concerns and the need for effective regulation, the potential benefits of AI are immense. By developing AI in a responsible and ethical manner, we can ensure that it serves as a force for good and contributes to the betterment of society. The future of AI is exciting, and its impact will be felt for generations to come.
+"""
+
+def test_split_text():
+    """
+    Test the SplitText.split_text method to ensure it correctly splits the input
+    text into chunks of the specified size.
+    """
+    chunk_size_test = 5
+    split_obj = SplitText(chunk_size=chunk_size_test)
+    split_text_list = split_obj.split_text(TEXT_EXAMPLE)
+    
+    print(f"Generated {len(split_text_list)} chunks:")
+    for idx, chunk in enumerate(split_text_list, 1):
+        print(f"Chunk {idx}: {chunk}")
+
+    assert split_text_list, "The split_text method returned an empty list."
+    
