@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13.0-slim
 
 WORKDIR /app
 
@@ -6,16 +6,20 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 COPY .env ./
 
-RUN python -m pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --upgrade pip
+RUN apt-get update && apt-get install -y \
+    gcc \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org poetry
 RUN poetry config virtualenvs.create false
-RUN poetry install --no-root --no-dev
+RUN poetry install --no-root --only main
 
 COPY model/ /app/model/
 COPY view/ /app/view/
 COPY controller/ /app/controller/
-COPY data/ /app/data/
+COPY modules/ /app/modules/
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "view/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "view/streamlit_app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

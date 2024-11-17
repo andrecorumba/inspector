@@ -1,0 +1,76 @@
+
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    env_file:
+      - .env
+    ports:
+      - "8997:8000"
+    volumes:
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
+      - ./.env:/app/.env
+      - ./model:/app/model
+      - ./view:/app/view
+      - ./view/api:/app/view/api
+      - ./view/streamlit_app:/app/view/streamlit_app
+      - ./controller:/app/controller
+      - ./modules:/app/modules
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
+    depends_on:
+      - redis
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    env_file:
+      - .env
+    ports:
+      - "8998:8501"
+    volumes:
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
+      - ./.env:/app/.env
+      - ./model:/app/model
+      - ./view:/app/view
+      - ./view/api:/app/view/api
+      - ./view/streamlit_app:/app/view/streamlit_app
+      - ./controller:/app/controller
+      - ./modules:/app/modules
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8501/_stcore/health || exit 1"]
+    depends_on:
+      - redis
+
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "8999:6379"
+    volumes:
+      - redis-data-inspector:/data
+
+  mkdocs:
+    build:
+      context: .
+      dockerfile: Dockerfile.mkdocs
+    ports:
+      - "8996:8996"
+    volumes:
+      - ./docs:/docs
+
+  tika:
+    image: apache/tika:latest
+    ports:
+      - "8995:9998"
+    environment:
+      - TIKA_SERVER_ENDPOINT=http://localhost:9998/
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:9998/ || exit 1"]
+  
+volumes:
+  redis-data-inspector:

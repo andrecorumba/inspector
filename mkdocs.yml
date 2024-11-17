@@ -1,8 +1,28 @@
-site_name: "Inspector"
-
-theme:
-  name: "material"
+site_name: Insight
 
 plugins:
-- search
-- mkdocstrings
+  - search
+  - include-markdown
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_bases: true
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+  palette: 
+      # Palette toggle for light mode
+      - scheme: default
+        toggle:
+            icon: material/brightness-7 
+            name: Switch to dark mode
+
+    # Palette toggle for dark mode
+      - scheme: slate
+        toggle:
+            icon: material/brightness-4
+            name: Switch to light mode
+

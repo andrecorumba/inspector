@@ -1,0 +1,24 @@
+FROM python:3.13.0-slim
+
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
+COPY .env ./
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-root --only main
+
+COPY model/ /app/model/
+COPY view/ /app/view/
+COPY controller/ /app/controller/
+COPY modules/ /app/modules/
+
+EXPOSE 8000
+
+CMD ["uvicorn", "view.api.api:api", "--reload", "--host", "0.0.0.0", "--port", "8000"]
