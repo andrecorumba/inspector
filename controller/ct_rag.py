@@ -7,7 +7,7 @@ from datetime import datetime
 
 from model.config_schema import AppConfig, SaveRedisPydantic
 from model.rag import RAGRedis
-from model.embedding import Embeddings
+from model.embedding import InspectorEmbeddings
 from model.vector_redis import RedisVectorStore
 
 from controller.ct_log import log_and_store
@@ -62,7 +62,7 @@ def base_rag_redis_pipeline_controller(
             
             content = redis_client.hget(redis_key_file, 'file').decode('utf-8')
             file_name = redis_client.hget(redis_key_file, 'file_name').decode('utf-8')
-            embedding = Embeddings()
+            embedding = InspectorEmbeddings()
             embedding.azure_create_embedding(content=content, file_name=file_name, chunk_size=chunk_size)
 
             # Armazenar o conteúdo tokenizado no Redis

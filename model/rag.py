@@ -1,4 +1,4 @@
-from model.embedding import Embeddings
+from model.embedding import InspectorEmbeddings
 from model.vector_redis import RedisVectorStore
 from model.config_schema import AppConfig
 
@@ -28,7 +28,6 @@ class RAGRedis():
         self.redis_url = redis_url
         self.chunk_size = chunk_size
 
-        # Configuração do cliente OpenAI para Azure
         self.client_chat = AzureOpenAI(
             api_key = os.getenv("AZURE_OPENAI_API_KEY"),  
             api_version = os.getenv("OPENAI_API_VERSION"),
@@ -36,13 +35,13 @@ class RAGRedis():
             azure_deployment = os.getenv("AZURE_DEPLOYMENT"),
             )
 
-        # Inicializa o RedisVectorStore e cria o esquema se necessário
+        # Inicialize the Redis Vector
         self.redis_vector_obj = RedisVectorStore(redis_url=self.redis_url)
         self.index = self.redis_vector_obj.create_schema(self.config, self.dimensions, overwrite=True)
 
     def similarity_search(self, query: str):
         self.query = query
-        query_emb_obj = Embeddings()
+        query_emb_obj = InspectorEmbeddings()
         query_emb_obj.azure_create_embedding(self.query, self.dimensions, self.chunk_size) 
 
         query_object = VectorQuery(
@@ -63,7 +62,7 @@ class RAGRedis():
         self.messages = [
             {
                 "role": "system",
-                "content": f"Você é um Auditor Interno Governamental.",
+                "content": f"You are a specialist in document analysis.",
             },
             {
                 "role": "user",

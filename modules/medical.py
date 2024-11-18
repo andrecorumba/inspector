@@ -5,7 +5,17 @@ from model.config_schema import (
     )
 from controller import ct_rag, ct_prompts, ct_response
 
-def module_etp_tic(config: AppConfig):
+def module_etp_tic(config: AppConfig) -> str:
+    """
+    Extracts specific medical parameters from a data source using a Redis-based RAG pipeline.
+
+    Args:
+        config (AppConfig): Configuration object containing user, task, and analysis information.
+
+    Returns:
+        str: The Redis key associated with the result of the RAG pipeline execution.
+    """
+
     query = """Extract the parâmeters: Creatinine, Hemoglobin, White Blood Cell Count (WBC),Red Blood Cell Count (RBC)
 	Platelet Count, Hematocrit, Glucose, Cholesterol (Total), LDL Cholesterol, HDL Cholesterol, Triglycerides, 
     Urea, Blood Urea Nitrogen (BUN), Liver Function Tests (ALT, AST), Bilirubin (Total and Direct), Albumin, 

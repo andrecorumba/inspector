@@ -1,0 +1,1 @@
+::: model.vector_redis

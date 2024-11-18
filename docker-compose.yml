@@ -59,9 +59,9 @@ services:
       context: .
       dockerfile: Dockerfile.mkdocs
     ports:
-      - "8996:8996"
+      - "8996:80"
     volumes:
-      - ./docs:/docs
+      - ./site:/usr/share/nginx/html
 
   tika:
     image: apache/tika:latest

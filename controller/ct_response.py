@@ -31,7 +31,6 @@ def get_redis_field(
         Union[Dict[str, Any], str]: The value of the field as a dictionary or string,
                                     or the not_found_message if not found.
     """    
-
     value = REDIS_CLIENT.hget(rag_redis_key, field_name)
     if value is not None:
         try:
@@ -45,21 +44,75 @@ def get_redis_field(
 
 
 def response_controller(rag_redis_key: str) -> Union[Dict[str, Any], str]:
+    """
+    Retrieves the response associated with a given Redis key.
+
+    Args:
+        rag_redis_key (str): The Redis key used to look up the response.
+
+    Returns:
+        Union[Dict[str, Any], str]: The response stored in Redis if found, or a default message ('No response found.') if not.
+    """
     return get_redis_field(rag_redis_key, 'response', 'No response found.')
 
 def usage_controller(rag_redis_key: str) -> Union[Dict[str, Any], str]:
+    """
+    Retrieves the usage associated with a given Redis key.
+
+    Args:
+        rag_redis_key (str): The Redis key used to look up the response.
+
+    Returns:
+        Union[Dict[str, Any], str]: The usage stored in Redis if found, or a default message ('No usage data found.') if not.
+    """
     return get_redis_field(rag_redis_key, 'usage', 'No usage data found.')
 
 def context_controller(rag_redis_key: str) -> Union[Dict[str, Any], str]:
+    """
+    Retrieves the context associated with a given Redis key.
+
+    Args:
+        rag_redis_key (str): The Redis key used to look up the context.
+
+    Returns:
+        Union[Dict[str, Any], str]: The context stored in Redis if found, or a default message ('No context data found.') if not.
+    """
     return get_redis_field(rag_redis_key, 'context', 'No context data found.')
 
 def detail_controller(rag_redis_key: str) -> Union[Dict[str, Any], str]:
+    """
+    Retrieves the detail associated with a given Redis key.
+
+    Args:
+        rag_redis_key (str): The Redis key used to look up the detail.
+
+    Returns:
+        Union[Dict[str, Any], str]: The detaul stored in Redis if found, or a default message ('No data found.') if not.
+    """
     return get_redis_field(rag_redis_key, 'response_json', 'No data found.')
 
 def message_controller(rag_redis_key: str, ) -> Union[Dict[str, Any], str]:
+    """
+    Retrieves the message associated with a given Redis key.
+
+    Args:
+        rag_redis_key (str): The Redis key used to look up the message.
+
+    Returns:
+        Union[Dict[str, Any], str]: The message stored in Redis if found, or a default message ('No message found.') if not.
+    """
     return get_redis_field(rag_redis_key, 'messages', 'No message found.')
 
 def file_names_controller(rag_redis_key: str) -> Union[Dict[str, Any], str]:
+    """
+    Retrieves the file names associated with a given Redis key.
+
+    Args:
+        rag_redis_key (str): The Redis key used to look up the file names.
+
+    Returns:
+        Union[Dict[str, Any], str]: The file names stored in Redis if found, or a default message ('No file found.') if not.
+    """
     return get_redis_field(rag_redis_key, 'file_names', 'No file found.')
 
 def evaluation_controller(rag_redis_key: str, ) -> Union[Dict[str, Any], str]:
@@ -161,8 +214,6 @@ def evaluation_response(rag_redis_key: str, evaluations_items: Evaluation):
     try:
         serialized_evaluations = {k: json.dumps(v) for k, v in evaluations_dict.items()}
         REDIS_CLIENT.hset(rag_redis_key, mapping=serialized_evaluations)
-        # log_and_store(f"Concluded and Evalutade at", rag_redis_key)
         return rag_redis_key
     except Exception as e:
-        # log_and_store(f"Error to save the evaluation at", rag_redis_key)
         raise

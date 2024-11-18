@@ -1,11 +1,9 @@
-FROM python:3.13.0-slim
+FROM nginx:alpine
 
-WORKDIR /app
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY . .
+COPY site/ /usr/share/nginx/html
 
-RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --no-cache-dir mkdocs mkdocs-material mkdocstrings-python mkdocs-include-markdown-plugin
+EXPOSE 80
 
-EXPOSE 8996
-
-CMD ["mkdocs", "serve", "--dirtyreload", "-a", "0.0.0.0:8996"]
+CMD ["nginx", "-g", "daemon off;"]

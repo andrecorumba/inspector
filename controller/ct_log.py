@@ -21,6 +21,7 @@ def log_and_store(message: str, config: AppConfig):
     Returns:
         None
     """
+    
     redis_key_status = f"status:{config.user}:{config.task_id}:{config.type_of_analysis}"
     timestamp = datetime.now().isoformat()
     logger.info(message)
@@ -36,5 +37,6 @@ def get_last_log_message(redis_key_status: str):
     Returns:
         str or None: The last message in the Redis list, or None if the list is empty.
     """
+
     last_message = REDIS_CLIENT.lindex(redis_key_status, -1)
     return last_message

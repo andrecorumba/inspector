@@ -3,7 +3,7 @@ from redis import Redis
 
 from datetime import datetime
 
-from model.embedding import Embeddings
+from model.embedding import InspectorEmbeddings
 from model.tika import TikaParser
 from model.vector_redis import RedisVectorStore
 from model.config_schema import AppConfig
