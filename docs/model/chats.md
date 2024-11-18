@@ -1,1 +1,1 @@
-:::model.chats
+::: model.chats

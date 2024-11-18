@@ -8,4 +8,4 @@ RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted
 
 EXPOSE 8996
 
-CMD ["mkdocs", "serve", "-a", "0.0.0.0:8996"]
+CMD ["mkdocs", "serve", "--dirtyreload", "-a", "0.0.0.0:8996"]
