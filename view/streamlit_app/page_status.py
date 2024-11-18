@@ -3,40 +3,26 @@ import requests
 import pandas as pd
 from model.config_schema import API_HOST, API_PORT
 
-def app():
-    """
-    Render the Status page for analysis.
 
-    This page shows the status of the last five analyses by default and allows users to view all tasks or refresh the data.
-    """
+def app():
+    """Render the Status page for analysis."""
     st.title('Analysis Status')
     st.write("""
-        Displays the processing status of the last five analyses.
-        Check "Show all" to display all tasks or click "Refresh" to update the status.
-    """)
-
-    # Ensure session state for user is initialized
-    if 'user' not in st.session_state:
-        st.session_state['user'] = 'default_user'
-
-    # Fetch the status DataFrame
+             Displays the processing status of the last five analyses.
+             Check "Show all" to display all tasks or click "Refresh" to update the status.
+             """)
     df = check_status()
-
     if not df.empty:
-        # Add refresh and toggle buttons
-        refresh = st.button(label="Refresh", key="button_refresh")
-        show_all = st.checkbox("Show all", key="check_all")
+        st.button(label="Refresh", key="button_refresh")
+        st.checkbox("Show all", key="check_all")
 
-        # Display the data
-        if refresh:
-            st.experimental_rerun()  # Refresh the app to fetch updated data
-
-        if show_all:
-            st.dataframe(data=df, hide_index=True)
-        else:
-            st.dataframe(data=df.head(5), hide_index=True)
+        if st.session_state["button_refresh"]:   
+            if st.session_state["check_all"]:
+                st.dataframe(data=df, hide_index=True)
+            else:
+                st.dataframe(data=df.head(5), hide_index=True)
     else:
-        st.warning(f"No tasks found for the user: {st.session_state.get('user', 'unknown')}")
+        st.warning(f"No tasks found for the user: {st.session_state["user"]}")
 
 
 def check_status():

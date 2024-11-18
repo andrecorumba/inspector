@@ -47,7 +47,6 @@ def upload_controller(file_bytes: bytes, file_name: str, config: AppConfig) -> A
             'file': content,
             'tokenized': '',
             })
-        timestamp = datetime.now().isoformat()
         log_and_store(f"Tika: Arquivo salvo: '{redis_key_file}", config)
         
         return redis_key_file

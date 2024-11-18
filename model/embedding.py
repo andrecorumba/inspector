@@ -30,7 +30,7 @@ class Embeddings():
             chunk_size: int = 8000,
             ):
         
-        self.text_splitted_list = SplitText(chunk_size).split_tiktoken(content)
+        self.text_splitted_list = SplitText(chunk_size).split_text(content)
 
         # Remove itens vazios da lista
         text_list = [item for item in self.text_splitted_list if item]

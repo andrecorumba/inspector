@@ -34,9 +34,9 @@ def app():
     # Fetch status dataframe
     df = check_status()
     if not df.empty:
-        df = df[df['Resultado'] == '✅']
-        total_response = df["Identificador"].to_list()
-        total_response = [identificador.replace('status', 'response') for identificador in total_response]
+        df = df[df['Result'] == '✅']
+        total_response = df["Identifier"].to_list()
+        total_response = [identifier.replace('status', 'response') for identifier in total_response]
 
         if total_response:
             rag_redis_key = st.selectbox(
@@ -47,7 +47,7 @@ def app():
             # Display AI responses and metadata
             st.markdown("## Model Response")
             response_data = fetch_api_data(f'http://{API_HOST}:{API_PORT}/response/{rag_redis_key}')
-            st.json(response_data)
+            st.write(response_data)
 
             st.markdown("## Tokens")
             tokens_data = fetch_api_data(f'http://{API_HOST}:{API_PORT}/response/use/{rag_redis_key}')
@@ -71,6 +71,7 @@ def app():
 
             st.markdown("## Response Evaluation")
             evaluation_data = fetch_api_data(f'http://{API_HOST}:{API_PORT}/response/evaluation/{rag_redis_key}')
+            st.json(evaluation_data, expanded=False)
 
             if evaluation_data.get("evaluation") == 0:
                 evaluation_score = st.slider(

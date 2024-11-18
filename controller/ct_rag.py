@@ -31,11 +31,11 @@ def save_rag_redis(config: AppConfig, rag_obj: RAGRedis, redis_client: Redis) ->
 
         # Armazenar todos os dados sob uma única chave de hash
         redis_client.hset(redis_key, mapping=data_to_save)
-        log_and_store(f"Concluido às", config)
+        log_and_store(f"Concluded at", config)
         return redis_key
     except Exception as e:
         # logging.error(f"Ocorreu um erro ao salvar no Redis: {e}")
-        log_and_store(f"RAG: Erro ao salvar no Redis: {e}", config)
+        log_and_store(f"RAG: Error to save on Redis: {e}", config)
         raise
 
 def base_rag_redis_pipeline_controller(    
@@ -53,13 +53,12 @@ def base_rag_redis_pipeline_controller(
     file_list_sufix = f"file:{sufix}*"
 
     try:
-        # Checar os arquivos relacionados com a chave
         file_keys_list = redis_client.keys(file_list_sufix)
         file_name_list = []
 
         for redis_key_file in file_keys_list:
-            # Criar embeddings
-            log_and_store(f"Criando Embedding: {redis_key_file}", config)
+            # Creating embeddings
+            log_and_store(f"Creating Embedding: {redis_key_file}", config)
             
             content = redis_client.hget(redis_key_file, 'file').decode('utf-8')
             file_name = redis_client.hget(redis_key_file, 'file_name').decode('utf-8')
@@ -75,7 +74,7 @@ def base_rag_redis_pipeline_controller(
             vector_store = RedisVectorStore(redis_url=redis_url)
             vector_store.load_data(embedding, config)
             
-            log_and_store(f"Embeddings carregados", config)
+            log_and_store(f"Embeddings loaded", config)
             file_name_list.append(file_name)
 
         # RAG

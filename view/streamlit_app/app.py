@@ -57,12 +57,7 @@ def main(user='user'):
 
 
 def load_version():
-    """
-    Load the application version from a file.
-
-    Returns:
-        str: The version of the application, or a default value if the file is not found.
-    """
+    """Load the application version from a file."""
     version_file_path = 'view/streamlit_app/version.txt'
     if os.path.exists(version_file_path):
         with open(version_file_path, "r") as f:

@@ -18,7 +18,6 @@ from model.config_schema import (
     AppConfig, 
     REDIS_CLIENT,
     REDIS_URL,
-    TIKA_SERVER_ENDPOINT
     )
 
 
@@ -40,11 +39,11 @@ async def upload(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...), 
     task_id: str = '1234', 
-    type_of_analysis: str = 'anexo', 
-    user: str = 'convidado',
+    type_of_analysis: str = 'medical', 
+    user: str = 'user',
     )->dict:
     """Endpoint to upload files. 
-    type_of_document: 'documento_entendimento' | 'matriz_riscos_controle' | 'matriz_planejamento' """
+    type_of_analysis: 'medical' | 'document' | 'other' """
     
     file_bytes = await file.read()
     file_name = file.filename.split("/")[-1]

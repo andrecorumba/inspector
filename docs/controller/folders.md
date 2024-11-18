@@ -1,3 +1,0 @@
-# folders.py
-
-::: controller.folders
