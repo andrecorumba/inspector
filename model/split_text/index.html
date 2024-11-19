@@ -326,11 +326,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../../controller/ct_rag/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct rag
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../controller/ct_response/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Ct response
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../controller/ct_upload/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct upload
   </span>
   
 
@@ -849,10 +891,7 @@ the RecursiveCharacterTextSplitter from the langchain_text_splitters library.</p
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SplitText</span><span class="p">:</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SplitText</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A utility class for splitting large text into smaller chunks using</span>
 <span class="sd">    the RecursiveCharacterTextSplitter from the langchain_text_splitters library.</span>
@@ -880,9 +919,6 @@ the RecursiveCharacterTextSplitter from the langchain_text_splitters library.</p
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[str]: A list of text chunks.</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            ValueError: If the &#39;content&#39; parameter is not a string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -1043,29 +1079,6 @@ the RecursiveCharacterTextSplitter from the langchain_text_splitters library.</p
       </tbody>
     </table>
 
-
-<p><span class="doc-section-title">Raises:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code>ValueError</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>If the 'content' parameter is not a string.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
             <details class="quote">
               <summary>Source code in <code>model/split_text.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
@@ -1085,10 +1098,7 @@ the RecursiveCharacterTextSplitter from the langchain_text_splitters library.</p
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">split_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">split_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Splits the given text into smaller chunks using RecursiveCharacterTextSplitter.</span>
 
@@ -1097,9 +1107,6 @@ the RecursiveCharacterTextSplitter from the langchain_text_splitters library.</p
 
 <span class="sd">    Returns:</span>
 <span class="sd">        List[str]: A list of text chunks.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        ValueError: If the &#39;content&#39; parameter is not a string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>

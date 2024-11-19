@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../../controller/ct_upload/">
+        <link rel="prev" href="../ct_response/">
       
       
-        <link rel="next" href="../config_schema/">
+        <link rel="next" href="../../model/chats/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Chats - Insight</title>
+        <title>Ct upload - Insight</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#model.chats" class="md-skip">
+        <a href="#controller.ct_upload" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Chats
+              Ct upload
             
           </span>
         </div>
@@ -246,17 +246,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -270,7 +272,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Controller
@@ -284,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/ct_log/" class="md-nav__link">
+      <a href="../ct_log/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/ct_prompts/" class="md-nav__link">
+      <a href="../ct_prompts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -326,7 +328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/ct_rag/" class="md-nav__link">
+      <a href="../ct_rag/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -347,7 +349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/ct_response/" class="md-nav__link">
+      <a href="../ct_response/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -360,71 +362,6 @@
   
 
               
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../controller/ct_upload/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Ct upload
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Model
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Model
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -444,7 +381,7 @@
           
   
   <span class="md-ellipsis">
-    Chats
+    Ct upload
   </span>
   
 
@@ -455,7 +392,7 @@
         
   
   <span class="md-ellipsis">
-    Chats
+    Ct upload
   </span>
   
 
@@ -475,9 +412,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#model.chats" class="md-nav__link">
+  <a href="#controller.ct_upload" class="md-nav__link">
     <span class="md-ellipsis">
-      chats
+      ct_upload
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller.ct_upload.upload_controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      upload_controller
     </span>
   </a>
   
@@ -492,6 +438,48 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Model
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Model
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
                 
   
@@ -499,7 +487,28 @@
   
   
     <li class="md-nav__item">
-      <a href="../config_schema/" class="md-nav__link">
+      <a href="../../model/chats/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chats
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../model/config_schema/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -520,7 +529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../embedding/" class="md-nav__link">
+      <a href="../../model/embedding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -541,7 +550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../split_text/" class="md-nav__link">
+      <a href="../../model/split_text/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -562,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tika/" class="md-nav__link">
+      <a href="../../model/tika/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -583,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vector_redis/" class="md-nav__link">
+      <a href="../../model/vector_redis/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -692,9 +701,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#model.chats" class="md-nav__link">
+  <a href="#controller.ct_upload" class="md-nav__link">
     <span class="md-ellipsis">
-      chats
+      ct_upload
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#controller.ct_upload.upload_controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      upload_controller
     </span>
   </a>
   
@@ -715,19 +733,230 @@
                   
 
 
-  <h1>Chats</h1>
+  <h1>Ct upload</h1>
 
 <div class="doc doc-object doc-module">
 
 
 
-<a id="model.chats"></a>
+<a id="controller.ct_upload"></a>
     <div class="doc doc-contents first">
 
 
 
 
 
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="controller.ct_upload.upload_controller" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">upload_controller</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Handles the processing of an uploaded file, including content extraction, embedding creation, 
+and storage in Redis.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>file_bytes</code>
+            </td>
+            <td>
+                  <code>bytes</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The binary content of the uploaded file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>file_name</code>
+            </td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of the uploaded file.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>config</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="model.config_schema.AppConfig" href="../../model/config_schema/#model.config_schema.AppConfig">AppConfig</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The configuration object containing user, task, and analysis details.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>Any</code></td>            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The Redis key for the saved file data, or None if an error occurs during processing.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>controller/ct_upload.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">upload_controller</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">AppConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handles the processing of an uploaded file, including content extraction, embedding creation, </span>
+<span class="sd">    and storage in Redis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_bytes (bytes): The binary content of the uploaded file.</span>
+<span class="sd">        file_name (str): The name of the uploaded file.</span>
+<span class="sd">        config (AppConfig): The configuration object containing user, task, and analysis details.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Any: The Redis key for the saved file data, or None if an error occurs during processing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sufix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">task_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">type_of_analysis</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Analyze the file content using Tika</span>
+        <span class="n">tika_parser</span> <span class="o">=</span> <span class="n">TikaParser</span><span class="p">(</span><span class="n">tika_server</span><span class="o">=</span><span class="n">TIKA_SERVER_ENDPOINT</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">tika_parser</span><span class="o">.</span><span class="n">tika_parser_from_bytes</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">)</span>
+        <span class="n">file_hash</span> <span class="o">=</span> <span class="n">tika_parser</span><span class="o">.</span><span class="n">hash_file_bytes</span><span class="p">(</span><span class="n">file_bytes</span><span class="p">)</span>
+
+        <span class="c1"># Take only the first 16 characters of the hash</span>
+        <span class="n">redis_key_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;file:</span><span class="si">{</span><span class="n">sufix</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">file_hash</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">log_and_store</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tika: Extracted file </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_and_store</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tika: Error extracting file </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Store the parsed content in Redis</span>
+        <span class="n">REDIS_CLIENT</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="n">redis_key_file</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
+            <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+            <span class="s1">&#39;tokenized&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="p">})</span>
+        <span class="n">log_and_store</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tika: File saved: </span><span class="si">{</span><span class="n">redis_key_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">redis_key_file</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_and_store</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tika: Error in upload_controller: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+        <span class="k">raise</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
 
     </div>
 

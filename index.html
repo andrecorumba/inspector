@@ -279,14 +279,38 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#azure-openai-integration" class="md-nav__link">
+    <nav class="md-nav" aria-label="Key Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#insight-extraction" class="md-nav__link">
     <span class="md-ellipsis">
-      Azure OpenAI Integration
+      Insight Extraction
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -303,6 +327,15 @@
   <a href="#infrastructure" class="md-nav__link">
     <span class="md-ellipsis">
       Infrastructure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-openai-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Azure OpenAI Integration
     </span>
   </a>
   
@@ -427,11 +460,53 @@
   
   
     <li class="md-nav__item">
+      <a href="controller/ct_rag/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct rag
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="controller/ct_response/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Ct response
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="controller/ct_upload/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct upload
   </span>
   
 
@@ -712,14 +787,38 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#azure-openai-integration" class="md-nav__link">
+    <nav class="md-nav" aria-label="Key Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#insight-extraction" class="md-nav__link">
     <span class="md-ellipsis">
-      Azure OpenAI Integration
+      Insight Extraction
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -736,6 +835,15 @@
   <a href="#infrastructure" class="md-nav__link">
     <span class="md-ellipsis">
       Infrastructure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-openai-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Azure OpenAI Integration
     </span>
   </a>
   
@@ -786,37 +894,22 @@
 <h1 id="inspector">Inspector</h1>
 <p>Inspector is a Proof of Concept (POC) for a Python-based web application designed to analyze documents using cutting-edge AI technologies.</p>
 <h2 id="key-features">Key Features</h2>
+<h3 id="insight-extraction">Insight Extraction</h3>
 <ul>
-<li><strong>Insight Extraction</strong>: Leverages large language models (LLMs) for user-driven document analysis, integrated with Azure OpenAI services.</li>
-<li><strong>Data Privacy</strong>: Securely handles sensitive data by identifying and masking personal information (e.g., names, document numbers) before transmission to external services.</li>
-<li><strong>Backend and Frontend Integration</strong>:</li>
-<li>Backend: Powered by <strong>FastAPI</strong>.</li>
-<li>Frontend: Built with <strong>Streamlit</strong>.</li>
-<li><strong>Tooling</strong>:</li>
-<li><strong>Redis</strong> as a vector database for efficient data retrieval.</li>
-<li><strong>Apache Tika</strong> for extracting information from diverse document formats.</li>
-<li><strong>Advanced AI Techniques</strong>:</li>
-<li><strong>Retrieval-Augmented Generation (RAG)</strong>.</li>
-<li>Advanced prompting strategies like <strong>Chain-of-Thought</strong> and <strong>Tree-of-Thought</strong>.</li>
+<li>Large Language Models (LLMs): Utilizes advanced LLMs for user-driven document analysis, seamlessly integrated with Azure OpenAI services.</li>
+<li>Retrieval-Augmented Generation (RAG): Enhances information retrieval by combining retrieval mechanisms with generative models, enabling more accurate and contextually relevant insights.</li>
+<li>Prompting Techniques like <a href="https://arxiv.org/pdf/2305.10601">Tree-of-Thought Prompting</a> to facilitates complex reasoning processes to improve the quality of generated responses.</li>
+<li>Secure Data Handling: Protects sensitive information by identifying and masking personal data (e.g., names, document numbers) before any transmission to external services, ensuring confidentiality and compliance. (<em>coming soon</em>)</li>
 </ul>
-<h2 id="azure-openai-integration">Azure OpenAI Integration</h2>
-<p>The project utilizes Azure OpenAI services for generating insights and embeddings. Ensure the following environment variables are configured:</p>
-<pre><code class="language-env">AZURE_OPENAI_API_KEY=&quot;xxxxx&quot;
-OPENAI_API_TYPE=&quot;azure&quot;
-AZURE_OPENAI_ENDPOINT=&quot;xxxxx&quot;
-OPENAI_API_VERSION=&quot;xxxxx&quot;
-AZURE_DEPLOYMENT=&quot;xxxxx&quot;
-AZURE_EMBEDDING_DEPLOYMENT=&quot;xxxxx&quot;
-
-# Other Services Configuration
-API_HOST=fastapi
-API_PORT=8000
-REDIS_HOST=redis
-REDIS_PORT=6379
-STREAMLIT_PORT=8501
-TIKA_SERVER_ENDPOINT=&quot;http://tika:9998/&quot;
+<h3 id="integration">Integration</h3>
+<ul>
+<li>Apache Tika Integration: Efficiently extracts and processes information from a wide variety of document formats, ensuring versatile data handling.</li>
+<li>Redis Vector Database: Employs Redis for high-performance vector storage and retrieval, optimizing data management and access speeds.</li>
+</ul>
+<h3 id="documentation">Documentation</h3>
+<p>The documentation was created using the <code>mkdocs-material</code> and <code>mkdocs-string</code> libraries.</p>
+<pre><code>https://andrecorumba.github.io/inspector/
 </code></pre>
-<p>These environment variables enable seamless interaction with Azure OpenAI endpoints for document analysis and embedding operations.</p>
 <h2 id="libraries-used">Libraries Used</h2>
 <p>This project leverages the following Python libraries and tools:
 - python-dotenv: For environment variable management.
@@ -846,6 +939,30 @@ TIKA_SERVER_ENDPOINT=&quot;http://tika:9998/&quot;
     - Serves project documentation.
 5. Tika: Port: 8995
     - Extracts information from documents.</p>
+<h2 id="azure-openai-integration">Azure OpenAI Integration</h2>
+<p>The project utilizes Azure OpenAI services for generating insights and embeddings. Ensure the following environment variables <code>.env</code> file are configured:</p>
+<pre><code class="language-env"># If you use Azure services
+AZURE_OPENAI_API_KEY = &quot;your_api_key_here&quot;
+OPENAI_API_TYPE = &quot;azure&quot;
+AZURE_OPENAI_ENDPOINT = &quot;https://your_azure_endpointservices.com/&quot;
+OPENAI_API_VERSION = &quot;api_version&quot;
+AZURE_DEPLOYMENT = &quot;your_azure_azure_chat_deployment_name&quot;
+AZURE_EMBEDDING_DEPLOYMENT = &quot;your_azure_embedding_deployment_name&quot;
+
+# If you use Openai Services
+OPENAI_API_KEY=&quot;your_api_key_here&quot;
+MODEL_NAME = &quot;gpt-4o-mini&quot; # e.g
+
+# Services
+API_HOST=fastapi
+API_PORT=8000
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+STREAMLIT_PORT=8501
+TIKA_SERVER_ENDPOINT='http://tika:9998/'
+</code></pre>
+<p>These environment variables enable seamless interaction with Azure OpenAI endpoints for document analysis and embedding operations.</p>
 <h2 id="how-to-run">How to Run</h2>
 <ol>
 <li>Clone the repository and navigate to the project directory:</li>

@@ -326,11 +326,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../../controller/ct_rag/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct rag
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../controller/ct_response/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Ct response
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../controller/ct_upload/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct upload
   </span>
   
 
@@ -814,6 +856,17 @@
               </div>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="model.config_schema.AppConfig.service">service</span></code></td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Service of the LLM. "azure" or "openai"</p>
+              </div>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -835,7 +888,9 @@
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AppConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AppConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the configuration for an application task.</span>
 
@@ -843,10 +898,12 @@
 <span class="sd">        user (str): The user identifier associated with the task.</span>
 <span class="sd">        task_id (str): A unique identifier for the task.</span>
 <span class="sd">        type_of_analysis (str): The type of analysis to be performed.</span>
+<span class="sd">        service (str): Service of the LLM. &quot;azure&quot; or &quot;openai&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">user</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">type_of_analysis</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">type_of_analysis</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;document&quot;</span><span class="p">)</span>
+    <span class="n">service</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;azure&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -931,16 +988,16 @@
 
               <details class="quote">
                 <summary>Source code in <code>model/config_schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Evaluation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Evaluation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents an evaluation of a response or task.</span>
 
@@ -1122,9 +1179,7 @@
 
               <details class="quote">
                 <summary>Source code in <code>model/config_schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
@@ -1147,7 +1202,9 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SaveRedisPydantic</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SaveRedisPydantic</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a data model for saving responses and related information to Redis.</span>
 

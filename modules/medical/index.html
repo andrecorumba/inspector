@@ -324,11 +324,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../../controller/ct_rag/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct rag
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../controller/ct_response/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Ct response
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../controller/ct_upload/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Ct upload
   </span>
   
 
@@ -608,9 +650,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#modules.medical.module_etp_tic" class="md-nav__link">
+  <a href="#modules.medical.module_medical" class="md-nav__link">
     <span class="md-ellipsis">
-      module_etp_tic
+      module_medical
     </span>
   </a>
   
@@ -666,9 +708,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#modules.medical.module_etp_tic" class="md-nav__link">
+  <a href="#modules.medical.module_medical" class="md-nav__link">
     <span class="md-ellipsis">
-      module_etp_tic
+      module_medical
     </span>
   </a>
   
@@ -718,8 +760,8 @@
 <div class="doc doc-object doc-function">
 
 
-<h2 id="modules.medical.module_etp_tic" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">module_etp_tic</span><span class="p">(</span><span class="n">config</span><span class="p">)</span></code>
+<h2 id="modules.medical.module_medical" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">module_medical</span><span class="p">(</span><span class="n">config</span><span class="p">)</span></code>
 
 </h2>
 
@@ -810,7 +852,8 @@
 <span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">module_etp_tic</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">AppConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">module_medical</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">AppConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts specific medical parameters from a data source using a Redis-based RAG pipeline.</span>
 
@@ -827,13 +870,14 @@
 <span class="s2">    Calcium (Serum), Sodium (Serum), Potassium (Serum), Thyroid Stimulating Hormone (TSH)&quot;&quot;&quot;</span>
 
     <span class="n">rag_redis_key</span> <span class="o">=</span> <span class="n">ct_rag</span><span class="o">.</span><span class="n">base_rag_redis_pipeline_controller</span><span class="p">(</span>
-        <span class="n">prompt</span><span class="o">=</span><span class="n">ct_prompts</span><span class="o">.</span><span class="n">PROMPT_MEDIAL</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="o">=</span><span class="n">ct_prompts</span><span class="o">.</span><span class="n">PROMPT_MEDICAL</span><span class="p">,</span>
         <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
         <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
         <span class="n">redis_client</span><span class="o">=</span><span class="n">REDIS_CLIENT</span><span class="p">,</span>
         <span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
         <span class="n">redis_url</span><span class="o">=</span><span class="n">REDIS_URL</span><span class="p">,</span>
         <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span>
+        <span class="n">service</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">service</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">rag_redis_key</span>
