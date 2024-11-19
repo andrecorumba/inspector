@@ -29,9 +29,6 @@ class SplitText:
 
         Returns:
             List[str]: A list of text chunks.
-
-        Raises:
-            ValueError: If the 'content' parameter is not a string.
         """
 
         if not isinstance(content, str):

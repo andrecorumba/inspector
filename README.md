@@ -4,40 +4,26 @@ Inspector is a Proof of Concept (POC) for a Python-based web application designe
 
 ## Key Features
 
-- **Insight Extraction**: Leverages large language models (LLMs) for user-driven document analysis, integrated with Azure OpenAI services.
-- **Data Privacy**: Securely handles sensitive data by identifying and masking personal information (e.g., names, document numbers) before transmission to external services.
-- **Backend and Frontend Integration**:
-  - Backend: Powered by **FastAPI**.
-  - Frontend: Built with **Streamlit**.
-- **Tooling**:
-  - **Redis** as a vector database for efficient data retrieval.
-  - **Apache Tika** for extracting information from diverse document formats.
-- **Advanced AI Techniques**:
-  - **Retrieval-Augmented Generation (RAG)**.
-  - Advanced prompting strategies like **Chain-of-Thought** and **Tree-of-Thought**.
+### Insight Extraction
 
-## Azure OpenAI Integration
+- Large Language Models (LLMs): Utilizes advanced LLMs for user-driven document analysis, seamlessly integrated with Azure OpenAI services.
+- Retrieval-Augmented Generation (RAG): Enhances information retrieval by combining retrieval mechanisms with generative models, enabling more accurate and contextually relevant insights.
+- Prompting Techniques like [Tree-of-Thought Prompting](https://arxiv.org/pdf/2305.10601) to facilitates complex reasoning processes to improve the quality of generated responses.
+- Secure Data Handling: Protects sensitive information by identifying and masking personal data (e.g., names, document numbers) before any transmission to external services, ensuring confidentiality and compliance. (*coming soon*)
 
-The project utilizes Azure OpenAI services for generating insights and embeddings. Ensure the following environment variables are configured:
+### Integration
 
-```env
-AZURE_OPENAI_API_KEY="xxxxx"
-OPENAI_API_TYPE="azure"
-AZURE_OPENAI_ENDPOINT="xxxxx"
-OPENAI_API_VERSION="xxxxx"
-AZURE_DEPLOYMENT="xxxxx"  # e.g., gpt-4o-mini
-AZURE_EMBEDDING_DEPLOYMENT="xxxxx"
+- Apache Tika Integration: Efficiently extracts and processes information from a wide variety of document formats, ensuring versatile data handling.
+- Redis Vector Database: Employs Redis for high-performance vector storage and retrieval, optimizing data management and access speeds.
 
-# Other Services Configuration
-API_HOST=fastapi
-API_PORT=8000
-REDIS_HOST=redis
-REDIS_PORT=6379
-STREAMLIT_PORT=8501
-TIKA_SERVER_ENDPOINT="http://tika:9998/"
+
+### Documentation
+
+The documentation was created using the `mkdocs-material` and `mkdocs-string` libraries.
+
 ```
-
-These environment variables enable seamless interaction with Azure OpenAI endpoints for document analysis and embedding operations.
+https://andrecorumba.github.io/inspector/
+```
 
 ## Libraries Used
 
@@ -71,6 +57,35 @@ The project uses Docker for deployment, and services are orchestrated using dock
     - Serves project documentation.
 5. Tika: Port: 8995
     - Extracts information from documents.
+
+## Azure OpenAI Integration
+
+The project utilizes Azure OpenAI services for generating insights and embeddings. Ensure the following environment variables `.env` file are configured:
+
+```env
+# If you use Azure services
+AZURE_OPENAI_API_KEY = "your_api_key_here"
+OPENAI_API_TYPE = "azure"
+AZURE_OPENAI_ENDPOINT = "https://your_azure_endpointservices.com/"
+OPENAI_API_VERSION = "api_version"
+AZURE_DEPLOYMENT = "your_azure_azure_chat_deployment_name"
+AZURE_EMBEDDING_DEPLOYMENT = "your_azure_embedding_deployment_name"
+
+# If you use Openai Services
+OPENAI_API_KEY="your_api_key_here"
+MODEL_NAME = "gpt-4o-mini" # e.g
+
+# Services
+API_HOST=fastapi
+API_PORT=8000
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+STREAMLIT_PORT=8501
+TIKA_SERVER_ENDPOINT='http://tika:9998/'
+```
+
+These environment variables enable seamless interaction with Azure OpenAI endpoints for document analysis and embedding operations.
 
 ## How to Run
 

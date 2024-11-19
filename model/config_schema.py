@@ -23,10 +23,12 @@ class AppConfig(BaseModel):
         user (str): The user identifier associated with the task.
         task_id (str): A unique identifier for the task.
         type_of_analysis (str): The type of analysis to be performed.
+        service (str): Service of the LLM. "azure" or "openai"
     """
     user: str
     task_id: str
-    type_of_analysis: str
+    type_of_analysis: Optional[str] = Field(default="document")
+    service: Optional[str] = Field(default="azure")
 
 
 class SaveRedisPydantic(BaseModel):

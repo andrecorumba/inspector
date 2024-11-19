@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 async def run(config: AppConfig, background_tasks: BackgroundTasks):
     """Endpoint to initiate a medical analysis task."""
     try:
-        background_tasks.add_task(medical.module_etp_tic, config)
+        background_tasks.add_task(medical.module_medical, config)
         logger.info(f"Task {config.task_id} has been queued successfully.")
         return JSONResponse({'task_id': config.task_id})
     except Exception as e:

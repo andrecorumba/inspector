@@ -43,6 +43,7 @@ def app():
                         "user": st.session_state['user'],
                         "task_id": task_id,
                         "type_of_analysis": type_of_analysis,
+                        "service": st.session_state["radio_service"],
                     }
                     st.write("Parameters sent for analysis:", parameters)
                     

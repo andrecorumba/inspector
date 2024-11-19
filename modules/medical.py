@@ -5,7 +5,7 @@ from model.config_schema import (
     )
 from controller import ct_rag, ct_prompts, ct_response
 
-def module_etp_tic(config: AppConfig) -> str:
+def module_medical(config: AppConfig) -> str:
     """
     Extracts specific medical parameters from a data source using a Redis-based RAG pipeline.
 
@@ -22,13 +22,14 @@ def module_etp_tic(config: AppConfig) -> str:
     Calcium (Serum), Sodium (Serum), Potassium (Serum), Thyroid Stimulating Hormone (TSH)"""
     
     rag_redis_key = ct_rag.base_rag_redis_pipeline_controller(
-        prompt=ct_prompts.PROMPT_MEDIAL,
+        prompt=ct_prompts.PROMPT_MEDICAL,
         query=query,
         config=config,
         redis_client=REDIS_CLIENT,
         k=6,
         redis_url=REDIS_URL,
         chunk_size=4000,
+        service=config.service
         )
     
     return rag_redis_key

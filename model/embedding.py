@@ -1,5 +1,4 @@
 from model.split_text import SplitText
-from typing import List, Union, Iterable
 import os
 
 import numpy as np
@@ -7,7 +6,7 @@ import numpy as np
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
-from openai import AzureOpenAI
+from openai import AzureOpenAI, OpenAI
 
 class InspectorEmbeddings():
     """
@@ -24,23 +23,19 @@ class InspectorEmbeddings():
         """
         Initializes the InspectorEmbeddings instance and configures the Azure OpenAI client.
         """
-        self.client = AzureOpenAI(
-            api_key = os.getenv("AZURE_OPENAI_API_KEY"),  
-            api_version = os.getenv("OPENAI_API_VERSION"),
-            azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
-            azure_deployment = os.getenv("AZURE_EMBEDDING_DEPLOYMENT"),
-        )
+        self.client = None
         self.embedding_float = None
         self.embedding_bytes = None
         self.dimensions = None
         self.data_to_vectorstore = []
 
-    def azure_create_embedding(
+    def create_embedding(
             self, 
             content: str,
             dimensions: int = 3072,
             file_name: str = "file_name",
             chunk_size: int = 8000,
+            service: str = "azure",
         )->list:
         """
         Creates embeddings for the given content using Azure OpenAI.
@@ -50,12 +45,10 @@ class InspectorEmbeddings():
             dimensions (int): The number of dimensions for the embeddings. Defaults to 3072.
             file_name (str): The name of the file associated with the content. Defaults to "file_name".
             chunk_size (int): The maximum size of text chunks. Defaults to 8000.
+            service (str): Service of the LLM. "azure" or "openai"
 
         Returns:
             list: A list of embeddings in float format.
-        
-        Raises:
-            RuntimeError: If there is an error during embedding creation.
         """
         self.text_splitted_list = SplitText(chunk_size).split_text(content)
 
@@ -64,6 +57,16 @@ class InspectorEmbeddings():
 
         # Create embeddings with Azure OpenAI
         try:
+            if service == "azure":
+                self.client = AzureOpenAI(
+                    api_key = os.getenv("AZURE_OPENAI_API_KEY"),  
+                    api_version = os.getenv("OPENAI_API_VERSION"),
+                    azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
+                    azure_deployment = os.getenv("AZURE_EMBEDDING_DEPLOYMENT"),
+                    )
+            elif service == "openai":
+                self.client = OpenAI(api_key = os.getenv("OPENAI_API_KEY"))             
+            
             self.embedding = self.client.embeddings.create(
                 input=text_list,
                 model='text-embedding-3-large',
@@ -79,7 +82,8 @@ class InspectorEmbeddings():
         self.file_name = file_name
 
         return self.embedding_float
-    
+
+
     def prepare_data(self)->list:
         """
         Prepares the embedding data for storage in a vector database.

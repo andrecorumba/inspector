@@ -14,7 +14,20 @@ from controller.ct_log import log_and_store
 from controller import ct_response
 
 def save_rag_redis(config: AppConfig, rag_obj: RAGRedis, redis_client: Redis) -> str:
-    """Salva os dados do objeto RAGRedis no Redis usando uma única chave de hash."""
+    """
+    Saves the data from a RAGRedis object into Redis using a single hash key.
+
+    Args:
+        config (AppConfig): The application configuration object with user, task, and analysis details.
+        rag_obj (RAGRedis): The RAGRedis object containing the response and associated data.
+        redis_client (Redis): The Redis client instance.
+
+    Returns:
+        str: The Redis key under which the data is saved.
+
+    Raises:
+        Exception: If an error occurs during the save operation.
+    """
     try:
         redis_key = f"rag:{config.user}:{config.task_id}:{config.type_of_analysis}"
         redis_key_status = f"status:{config.user}:{config.task_id}:{config.type_of_analysis}"
@@ -31,7 +44,7 @@ def save_rag_redis(config: AppConfig, rag_obj: RAGRedis, redis_client: Redis) ->
 
         # Armazenar todos os dados sob uma única chave de hash
         redis_client.hset(redis_key, mapping=data_to_save)
-        log_and_store(f"Concluded at", config)
+        log_and_store(f"Concluded", config)
         return redis_key
     except Exception as e:
         # logging.error(f"Ocorreu um erro ao salvar no Redis: {e}")
@@ -46,8 +59,27 @@ def base_rag_redis_pipeline_controller(
     redis_url: str,
     k: int = 6,
     chunk_size: int = 8000,
+    service: str = "azure",
 ) -> str:
-    """Executar RAG com uma lista de arquivos"""
+    """
+    Executes a Retrieval-Augmented Generation (RAG) pipeline with a list of files.
+
+    Args:
+        prompt (str): The system prompt for RAG.
+        query (str): The user query for retrieving relevant information.
+        config (AppConfig): The application configuration object with user, task, and analysis details.
+        redis_client (Redis): The Redis client instance.
+        redis_url (str): The Redis server URL.
+        k (int): The number of top results to retrieve. Defaults to 6.
+        chunk_size (int): The maximum chunk size for embeddings. Defaults to 8000. The text-embedding-3-large max inputs are 8191 tokens
+        service (str): Service of the LLM. "azure" or "openai"
+
+    Returns:
+        str: The Redis key where the RAG results are stored.
+
+    Raises:
+        Exception: If an error occurs during the pipeline execution.
+    """
     redis_key_status = f"status:{config.user}:{config.task_id}:{config.type_of_analysis}"
     sufix = f"{config.user}:{config.task_id}:{config.type_of_analysis}"
     file_list_sufix = f"file:{sufix}*"
@@ -63,13 +95,18 @@ def base_rag_redis_pipeline_controller(
             content = redis_client.hget(redis_key_file, 'file').decode('utf-8')
             file_name = redis_client.hget(redis_key_file, 'file_name').decode('utf-8')
             embedding = InspectorEmbeddings()
-            embedding.azure_create_embedding(content=content, file_name=file_name, chunk_size=chunk_size)
+            embedding.create_embedding(
+                content=content, 
+                file_name=file_name, 
+                chunk_size=chunk_size, 
+                service=service
+                )
 
-            # Armazenar o conteúdo tokenizado no Redis
+            # Load the tokenized content on Redis
             tokenized_content = str(embedding.text_splitted_list)
             redis_client.hset(redis_key_file, mapping={'tokenized': tokenized_content})
 
-            # Carregar embeddings no armazenamento de vetores Redis
+            # Load embeddings on Redis
             embedding.prepare_data()
             vector_store = RedisVectorStore(redis_url=redis_url)
             vector_store.load_data(embedding, config)
@@ -78,10 +115,16 @@ def base_rag_redis_pipeline_controller(
             file_name_list.append(file_name)
 
         # RAG
-        rag_obj = RAGRedis(config=config, redis_url=redis_url, k=k)
+        rag_obj = RAGRedis(
+            config=config, 
+            redis_url=redis_url, 
+            k=k, 
+            service=service
+            )
+        
         rag_obj.rag(query, prompt)
 
-        # Prepara os dados para salvar no redis
+        # Prepare data to save on Redis
         data_to_save = SaveRedisPydantic(
             response = json.dumps(rag_obj.response),
             context =  json.dumps(rag_obj.context),

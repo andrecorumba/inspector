@@ -193,10 +193,10 @@ def save_response_to_redis(config: AppConfig, data_to_save: SaveRedisPydantic) -
 
     try:
         REDIS_CLIENT.hset(redis_key, mapping=data_to_save)
-        log_and_store(f"Concluded at", config)
+        log_and_store(f"Concluded", config)
         return redis_key
     except Exception as e:
-        log_and_store(f"Error to save on Redis at", config)
+        log_and_store(f"Error to save on Redis", config)
         raise
 
 def evaluation_response(rag_redis_key: str, evaluations_items: Evaluation):

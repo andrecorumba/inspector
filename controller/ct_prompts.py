@@ -1,4 +1,8 @@
-PROMPT_MEDIAL = """You are an expert in analyzing laboratory blood tests.
+
+
+# Prompt using Tree-of-Thought Prompting Tecnique. https://arxiv.org/pdf/2305.10601
+
+PROMPT_MEDICAL = """You are an expert in analyzing laboratory blood tests.
 
 Task:
 Analyze the following medical exam and describe each of the parameters.

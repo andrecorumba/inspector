@@ -39,10 +39,15 @@ def main(user='user'):
             ],
         )
         st.text_input(
-            label='User',
+            label='Input your user',
             value=user,
             max_chars=50,
             key='user',
+        )
+        st.radio(
+            label="Choose the service used in your .env file",
+            options=["azure", "openai"],
+            key="radio_service",
         )
     
     # Sidebar navigation logic
