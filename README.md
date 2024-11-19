@@ -19,11 +19,8 @@ Inspector is a Proof of Concept (POC) for a Python-based web application designe
 
 ### Documentation
 
-The documentation was created using the `mkdocs-material` and `mkdocs-string` libraries.
+The documentation was created using the `mkdocs-material` and `mkdocs-string` libraries. [https://andrecorumba.github.io/inspector/](https://andrecorumba.github.io/inspector/)
 
-```
-https://andrecorumba.github.io/inspector/
-```
 
 ## Libraries Used
 
