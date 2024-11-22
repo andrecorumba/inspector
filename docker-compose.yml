@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.fastapi
+    image: inspector/fastapi:latest
+    container_name: inspector-fastapi
     env_file:
       - .env
     ports:
@@ -26,6 +28,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.streamlit
+    image: inspector/streamlit:latest
+    container_name: inspector-streamlit
     env_file:
       - .env
     ports:
@@ -42,6 +46,7 @@ services:
 
   redis:
     image: redis/redis-stack-server:latest
+    container_name: inspector-redis
     ports:
       - "8999:6379"
     volumes:
@@ -51,6 +56,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.mkdocs
+    image: inspector/mkdocs:latest
+    container_name: inspector-mkdocs
     ports:
       - "8996:80"
     volumes:
@@ -58,6 +65,7 @@ services:
 
   tika:
     image: apache/tika:latest
+    container_name: inspector-tika
     ports:
       - "8995:9998"
     environment:
@@ -67,6 +75,7 @@ services:
 
   nginx:
     image: nginx:latest
+    container_name: inspector-nginx
     ports:
       - "80:80"
     volumes:
