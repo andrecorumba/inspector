@@ -15,8 +15,6 @@ pytest = "^8.3.3"
 tiktoken = "^0.8.0"
 fastapi = "^0.115.5"
 uvicorn = "^0.32.0"
-streamlit = "^1.40.1"
-streamlit-option-menu = "^0.4.0"
 redis = "^5.2.0"
 redisvl = "^0.3.6"
 tika = "^2.6.0"
@@ -29,6 +27,11 @@ langchain-core = "^0.3.19"
 mkdocs-material = "^9.5.44"
 mkdocstrings-python = "^1.12.2"
 mkdocs-include-markdown-plugin = "^7.0.1"
+
+
+[tool.poetry.group.streamlit.dependencies]
+streamlit = "^1.40.1"
+streamlit-option-menu = "^0.4.0"
 
 [build-system]
 requires = ["poetry-core"]

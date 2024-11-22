@@ -1,7 +1,9 @@
 import streamlit as st
 import requests
-from model.config_schema import API_HOST, API_PORT
 from page_status import check_status
+
+API_HOST = "fastapi"
+API_PORT = "8000"
 
 def fetch_api_data(endpoint: str):
     """

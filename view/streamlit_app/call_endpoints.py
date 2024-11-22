@@ -1,12 +1,15 @@
 import requests
 import logging
 import os
-from dotenv import load_dotenv, find_dotenv
+# from dotenv import load_dotenv, find_dotenv
 
-# Load environment variables
-load_dotenv(find_dotenv())
-API_HOST = os.getenv("API_HOST", "localhost")
-API_PORT = os.getenv("API_PORT", "8000")
+# # Load environment variables
+# load_dotenv(find_dotenv())
+# API_HOST = os.getenv("API_HOST", "localhost")
+# API_PORT = os.getenv("API_PORT", "8000") 
+
+API_HOST = "fastapi"
+API_PORT = "8000"
 
 logger = logging.getLogger(__name__)
 

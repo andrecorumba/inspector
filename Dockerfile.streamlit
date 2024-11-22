@@ -2,7 +2,6 @@ FROM python:3.13.0-slim
 
 WORKDIR /app
 
-# Copia os arquivos de configuração do Poetry
 COPY pyproject.toml poetry.lock ./
 COPY .env ./
 
@@ -13,12 +12,13 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org poetry
 RUN poetry config virtualenvs.create false
-RUN poetry install --no-root --only main
+RUN poetry install --no-root --only streamlit
 
-COPY model/ /app/model/
-COPY view/ /app/view/
-COPY controller/ /app/controller/
-COPY modules/ /app/modules/
+# COPY model/ /app/model/
+# COPY view/ /app/view/
+COPY view/streamlit_app /app/view/streamlit_app
+# COPY controller/ /app/controller/
+# COPY modules/ /app/modules/
 
 EXPOSE 8501
 

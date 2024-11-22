@@ -1,4 +1,4 @@
-
+name: inspector
 
 services:
   fastapi:
@@ -14,11 +14,11 @@ services:
       - ./poetry.lock:/app/poetry.lock
       - ./.env:/app/.env
       - ./model:/app/model
-      - ./view:/app/view
-      - ./view/api:/app/view/api
-      - ./view/streamlit_app:/app/view/streamlit_app
       - ./controller:/app/controller
       - ./modules:/app/modules
+      # - ./view:/app/view
+      - ./view/api:/app/view/api
+      # - ./view/streamlit_app:/app/view/streamlit_app
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
     depends_on:
@@ -36,12 +36,7 @@ services:
       - ./pyproject.toml:/app/pyproject.toml
       - ./poetry.lock:/app/poetry.lock
       - ./.env:/app/.env
-      - ./model:/app/model
-      - ./view:/app/view
-      - ./view/api:/app/view/api
       - ./view/streamlit_app:/app/view/streamlit_app
-      - ./controller:/app/controller
-      - ./modules:/app/modules
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:8501/_stcore/health || exit 1"]
     depends_on:
@@ -71,6 +66,16 @@ services:
       - TIKA_SERVER_ENDPOINT=http://localhost:9998/
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:9998/ || exit 1"]
+
+  # nginx:
+  #   image: nginx:latest
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - streamlit
+  #   restart: always
   
 volumes:
   redis-data-inspector:

@@ -1,7 +1,9 @@
 import streamlit as st
 import requests
 import pandas as pd
-from model.config_schema import API_HOST, API_PORT
+
+API_HOST = "fastapi"
+API_PORT = "8000"
 
 
 def app():
