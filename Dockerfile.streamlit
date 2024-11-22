@@ -14,12 +14,9 @@ RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-root --only streamlit
 
-# COPY model/ /app/model/
-# COPY view/ /app/view/
-COPY view/streamlit_app /app/view/streamlit_app
-# COPY controller/ /app/controller/
-# COPY modules/ /app/modules/
 
-EXPOSE 8501
+COPY view/streamlit_app /app/view/streamlit_app
+
+# EXPOSE 8501
 
 CMD ["streamlit", "run", "view/streamlit_app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
