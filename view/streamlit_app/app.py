@@ -13,6 +13,10 @@ from view.streamlit_app import (
     page_status, 
 )
 
+st.set_page_config(
+    page_title="Inspector",
+    page_icon="material/medication_liquid",
+)
 
 def main(user='user'):
     """
@@ -22,8 +26,9 @@ def main(user='user'):
         user (str): Default user name for the application.
     """
     with st.sidebar:
+        st.text(f"Version: {load_version()}")
         option = option_menu(
-            menu_title=load_version(),
+            menu_title="Inspector",
             options=[
                 'Home',
                 'Medical Tests',
