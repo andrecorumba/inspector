@@ -1,0 +1,1 @@
+::: view.streamlit_app.call_endpoints

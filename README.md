@@ -2,6 +2,10 @@
 
 Inspector is a Proof of Concept (POC) for a Python-based web application designed to analyze documents using cutting-edge AI technologies.
 
+## Application
+
+Test the application [here](http://100.26.236.39)
+
 ## Key Features
 
 ### Insight Extraction

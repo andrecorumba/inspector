@@ -1,0 +1,1 @@
+::: view.api.route_medical
