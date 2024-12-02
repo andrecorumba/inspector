@@ -68,7 +68,12 @@ class RAGRedis():
             },
             {
                 "role": "user",
-                "content": self.prompt + str(self.context),
+                "content": self.prompt.format_map(
+                    {
+                        "context" : str(self.context),
+                        "language" : self.config.language
+                    }
+                    ),
             },
         ]
         

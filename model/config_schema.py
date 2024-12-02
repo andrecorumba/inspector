@@ -29,6 +29,7 @@ class AppConfig(BaseModel):
     task_id: str
     type_of_analysis: Optional[str] = Field(default="document")
     service: Optional[str] = Field(default="azure")
+    language: Optional[str] = Field(default="english")
 
 
 class SaveRedisPydantic(BaseModel):

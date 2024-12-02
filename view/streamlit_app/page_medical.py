@@ -17,12 +17,38 @@ def app():
                 """
                 )
 
-    select_document = "Supported documents: PDF, DOCX, XLSX, CSV, MD, TXT"
-    st.markdown(f"**{select_document}**")
+    st.selectbox(
+        label="Choose the language for the response",
+        options = [
+                    "🇺🇸 English",
+                    "🇧🇷 Portuguese",
+                    "🇪🇸 Spanish",
+                    "🇫🇷 French",
+                    "🇩🇪 German",
+                    "🇮🇹 Italian",
+                    "🇨🇳 Chinese (Simplified)",
+                    "🇯🇵 Japanese",
+                    "🇷🇺 Russian",
+                    "🇵🇱 Polish",
+                    "🇰🇷 Korean",
+                    "🇮🇳 Hindi",
+                    "🇦🇪 Arabic",
+                    "🇲🇽 Spanish (Mexico)",
+                    "🇿🇦 Zulu",
+                    "🇳🇬 Yoruba",
+                    "🇹🇭 Thai",
+                    "🇮🇩 Indonesian",
+                    "🇵🇭 Filipino",
+                    "🇨🇦 English (Canada)",
+                    "🇦🇺 English (Australia)"
+                ],
+        index=0,
+        key="language_option"
+    )
 
     uploaded_file = st.file_uploader(
         label="Upload your document here",  
-        type=['pdf', 'docx', 'xlsx', 'csv', 'md', 'txt'], 
+        # type=['pdf', 'docx', 'xlsx', 'csv', 'md', 'txt'], 
         key='uploaded_file', 
         accept_multiple_files=False
         )
@@ -43,7 +69,8 @@ def app():
                         "user": st.session_state['user'],
                         "task_id": task_id,
                         "type_of_analysis": type_of_analysis,
-                        "service": st.session_state["radio_service"],
+                        "service": st.session_state["service_option"],
+                        "language": st.session_state["language_option"]
                     }
                     st.write("Parameters sent for analysis:", parameters)
                     

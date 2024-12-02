@@ -189,7 +189,7 @@ def save_response_to_redis(config: AppConfig, data_to_save: SaveRedisPydantic) -
     """
     redis_key = f"response:{config.user}:{config.task_id}:{config.type_of_analysis}"
     data_to_save = data_to_save.model_dump()
-    print(f'data_to_save:  {data_to_save}')
+    # print(f'data_to_save:  {data_to_save}')
 
     try:
         REDIS_CLIENT.hset(redis_key, mapping=data_to_save)

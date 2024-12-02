@@ -8,7 +8,7 @@ Task:
 Analyze the following medical exam and describe each of the parameters.
 
 Medical Exam:
-{items}
+{context}
 
 Objective:
 Create a comprehensive text based on the analysis of the medical exam parameters.
@@ -43,4 +43,7 @@ Highlight the items that are outside the expected parameters.
 
 ## Treatment Proposals
 Conclude with treatment suggestions, justifying them based on your analysis and the attachments.
+
+Response Language:
+Translate the response to {language}
 """
