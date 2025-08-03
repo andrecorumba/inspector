@@ -65,12 +65,12 @@ The project utilizes Azure OpenAI services for generating insights and embedding
 
 ```env
 # If you use Azure services
-AZURE_OPENAI_API_KEY = "your_api_key_here"
-OPENAI_API_TYPE = "azure"
-AZURE_OPENAI_ENDPOINT = "https://your_azure_endpointservices.com/"
-OPENAI_API_VERSION = "api_version"
-AZURE_DEPLOYMENT = "your_azure_azure_chat_deployment_name"
-AZURE_EMBEDDING_DEPLOYMENT = "your_azure_embedding_deployment_name"
+# AZURE_OPENAI_API_KEY = "your_api_key_here"
+# OPENAI_API_TYPE = "azure"
+# AZURE_OPENAI_ENDPOINT = "https://your_azure_endpointservices.com/"
+# OPENAI_API_VERSION = "api_version"
+# AZURE_DEPLOYMENT = "your_azure_azure_chat_deployment_name"
+# AZURE_EMBEDDING_DEPLOYMENT = "your_azure_embedding_deployment_name"
 
 # If you use Openai Services
 OPENAI_API_KEY="your_api_key_here"
@@ -88,7 +88,28 @@ TIKA_SERVER_ENDPOINT='http://tika:9998/'
 
 These environment variables enable seamless interaction with Azure OpenAI endpoints for document analysis and embedding operations.
 
-## How to Run
+## Local Development
+
+For local development, this project uses [Poetry](https://python-poetry.org/) to manage dependencies.
+
+### Setup
+
+1.  **Install Dependencies**: This command reads the `pyproject.toml` file and installs the required libraries into a new virtual environment.
+    ```bash
+    poetry install
+    ```
+
+2.  **Activate Virtual Environment**: To start using the project's dependencies, activate the virtual environment.
+    ```bash
+    eval $(poetry env activate)
+    ```
+
+3.  **Update Dependencies**: This command updates the project's libraries to the latest versions allowed in `pyproject.toml` and updates the `poetry.lock` file.
+    ```bash
+    poetry update
+    ```
+
+## How to Run (Docker)
 
 1. Clone the repository and navigate to the project directory:
 
@@ -119,5 +140,3 @@ This project is licensed under the MIT License.
 
 Author: André Rocha
 Version: 0.2.0
-
-Let me know if there are additional details or edits you'd like!
